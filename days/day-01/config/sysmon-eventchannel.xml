@@ -1,0 +1,5 @@
+<!-- Fragment: place inside the existing ossec_config element if absent. -->
+<localfile>
+  <location>Microsoft-Windows-Sysmon/Operational</location>
+  <log_format>eventchannel</log_format>
+</localfile>

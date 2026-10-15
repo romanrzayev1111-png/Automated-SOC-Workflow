@@ -1,6 +1,6 @@
 # Acceptance matrix
 
-This matrix maps the supplied Week 1 brief to the implementation evidence. The professional report uses Tetrion branding; requirement IDs are retained here for traceability. A screenshot is point-in-time evidence, not a new live test.
+This matrix maps the supplied Week 1 brief to the implementation evidence. Requirement IDs from the supplied brief are retained for traceability; the repository is a personal project. A screenshot is point-in-time evidence, not a new live test.
 
 **Recorded** = directly supported for the stated scope. **Partial** = only part demonstrated. **Open** = not established. No overall compliance percentage is assigned.
 
@@ -18,11 +18,11 @@ This matrix maps the supplied Week 1 brief to the implementation evidence. The p
 | W5 | Open | Retain dated idle docker stats output and populate the three-container memory table. |
 | A1 | Recorded | E25 shows Linux agent Running; E26 lists ubuntu-web Active at 192.168.38.131. |
 | A2 | Recorded | E23 and E26 list win-client Active at 192.168.38.133. |
-| A3 | Partial | E11 shows Sysmon64 Running with SwiftOnSecurity configuration. No Sysmon event in the dashboard is supplied. |
-| A4 | Partial | E13 shows Apache Running; E14 shows the default page. Confirm the request originated on the operator workstation. |
-| V1 | Open | Five deliberate event captures with rule descriptions and levels are absent. Complete docs/event-validation.md. |
+| A3 | Partial | E11 shows Sysmon Running; E33–E35 pair process commands, parent-61603 definitions and matching discovery alerts. Retain an expanded event showing channel/Event ID for full provenance. |
+| A4 | Partial | E13 shows Apache Running; E14 shows the default page at localhost, not the physical operator workstation. Capture the workstation request to .131. |
+| V1 | Partial | E32 verifies failed Windows logon; E33–E35 support Windows process discovery; E36–E37 show corrected SSH failure and an alert crop. Successful sudo and user creation remain open. See docs/event-validation.md. |
 | V2 | Recorded (documentation) | README and the report explain the expected agent -> manager -> Filebeat -> indexer -> dashboard path. A traced real event is still recommended. |
-| S1 | Partial | .gitignore and artifact checks are included; current supplied images contain no visually identified credentials. Complete a repository/history secret review before treating this as a comprehensive check. |
+| S1 | Partial | .gitignore and artifact checks are included; the supplied images have been visually reviewed without identifying usable credentials. Complete a repository/history secret review before treating this as a comprehensive check. |
 | S2 | Partial | VMnet1 is host-only and server NAT is visible. Source notes mention temporary endpoint NAT; final routes and adapter removal are unverified. |
 | D1 | Recorded (this delivery) | README, architecture/, evidence/ and journal.md are present. Publication status is reported separately. |
 | D2 | Partial | Start/stop order and readiness procedure are documented in README and docs/operations.md. Replay against the original VMs remains outstanding. |
@@ -32,7 +32,7 @@ This matrix maps the supplied Week 1 brief to the implementation evidence. The p
 
 1. Resolve resource variance, addressing, endpoint isolation and credential rotation.
 2. Verify Docker provenance, persistent kernel settings, VM clocks and snapshots.
-3. Capture Sysmon ingestion and the five deliberate event cases.
+3. Retain full Sysmon/SSH event context and complete the remaining deliberate event cases.
 4. Test restart/reboot persistence and measure idle container memory.
 5. Record Windows evaluation expiry and replay the operating procedure.
 

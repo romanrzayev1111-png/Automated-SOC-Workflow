@@ -18,7 +18,7 @@ When account access is available:
    Set the bio to the prepared text above.
 2. Create or open the public profile repository `romanrzayev1111-png/romanrzayev1111-png` and place the prepared profile README at its root.
 3. Pin `Automated-SOC-Workflow` in the profile's featured repositories.
-4. Suggested project description: `Evidence-led Wazuh security monitoring: Windows/Linux endpoints, Sysmon, architecture, operational handover and deployment evidence.`
+4. Suggested project description: `Day-by-day Wazuh security monitoring: Windows/Linux endpoints, Sysmon, custom rules, implementation guides and evidence.`
 5. Suggested topics: `wazuh`, `soc`, `blue-team`, `sysmon`, `security-monitoring`, `windows`, `linux`, `docker`.
 
 No secret value is needed in this document or in chat. Profile and repository-settings API access must be restored through the supported GitHub connection/account settings before those account changes can be applied automatically.

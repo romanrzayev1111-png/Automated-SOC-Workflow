@@ -22,7 +22,7 @@ Prepared on 15 October 2026 as a **retrospective from supplied evidence**, not a
 
 **Attempt / observation:** Sysmon 15.22 loads a SwiftOnSecurity configuration and reports Running (E11). Apache is installed, enabled and Running; its default page opens (E12–E14).
 
-**Issue:** Apache reports a ServerName warning. No Sysmon event is shown in Wazuh.
+**Issue:** Apache reports a ServerName warning. The corrected source adds custom Sysmon-process definitions and discovery alerts (E33–E35); a full raw channel event is still useful.
 
 **Resolution status:** Apache serves its page despite the warning; no warning removal is recorded. Sysmon dashboard ingestion remains to be tested.
 
@@ -44,8 +44,24 @@ Prepared on 15 October 2026 as a **retrospective from supplied evidence**, not a
 
 ## 06 — Linux agent and endpoint inventory
 
-**Attempt / observation:** Linux systemctl output shows wazuh-agent enabled and Running; E26 lists both win-client and ubuntu-web Active on agent 4.14.7. Hostname-setting commands follow in E27–E29.
+**Attempt / observation:** Linux systemctl output shows wazuh-agent enabled and Running; E26 lists both win-client and ubuntu-web Active on agent 4.14.7. Hostname-setting commands follow in E38–E40.
 
-**Issue:** Agent status does not establish delivery of the five required controlled events. Restart/reboot persistence, snapshots and idle memory are absent.
+**Issue:** The corrected source adds Windows logon/discovery results and a Linux SSH result; successful sudo and user creation are still absent. Restart/reboot persistence, snapshots and idle memory are absent.
 
 **Resolution status:** Enrollment is recorded. Add genuine dated test entries as the outstanding acceptance tasks are executed; do not treat this retrospective as five independently recorded troubleshooting sessions.
+
+## 07 — Corrected authentication tests
+
+**Attempt / observation:** E29 targets the wrong 192.168.99.130 subnet and receives Network is unreachable. E36 reaches the intended .131 endpoint and records genuine authentication failure; E37 lists non-existent-user rule 5710 / level 5.
+
+**Issue:** E30/E31 fail sudo authentication, so neither the successful-sudo requirement nor local-user creation is demonstrated. E37 omits agent/time columns.
+
+**Demonstrated resolution:** The SSH destination is corrected. Successful sudo, new-user creation and full SSH alert context remain open; no unrecorded fix is claimed.
+
+## 08 — Windows discovery rules and result attribution
+
+**Attempt / observation:** E33 runs whoami, ipconfig, hostname and encoded benign whoami. E35 contains four custom definitions inheriting Sysmon Event 1 parent 61603; E34 lists 100100/10, 100101/9 and 100102/8.
+
+**Issue:** The encoded-PowerShell result is built-in 92057/12, not proof that custom 100103 fired. The extra 92213 row cannot be causally attributed from the crop.
+
+**Demonstrated resolution:** All four definitions are transcribed and documented, with observed and configured-only results separated. The parent definition was checked against the release ruleset; no unknown if_sid or search-limit repair is invented.

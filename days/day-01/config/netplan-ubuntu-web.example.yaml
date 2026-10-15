@@ -1,0 +1,8 @@
+# Merge into the existing endpoint Netplan configuration after local review.
+network:
+  version: 2
+  ethernets:
+    ens33:
+      dhcp4: false
+      addresses:
+        - 192.168.38.131/24

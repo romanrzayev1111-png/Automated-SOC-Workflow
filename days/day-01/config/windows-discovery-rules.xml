@@ -1,0 +1,29 @@
+<!-- Transcribed from windows.docx, image35.png. Parent 61603 was checked
+     against Wazuh v4.14.7: Sysmon Event ID 1 / process creation.
+     This file is not a claim that every rule ID fired in the captures. -->
+<group name="local,sysmon,custom_detection,">
+  <rule id="100100" level="10">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)whoami\.exe</field>
+    <description>Windows user discovery - whoami.exe executed on $(win.system.computer)</description>
+    <mitre><id>T1033</id></mitre>
+  </rule>
+  <rule id="100101" level="9">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)ipconfig\.exe</field>
+    <description>Windows network configuration discovery - ipconfig.exe executed on $(win.system.computer)</description>
+    <mitre><id>T1016</id></mitre>
+  </rule>
+  <rule id="100102" level="8">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)\\hostname\.exe</field>
+    <description>Windows system discovery - hostname.exe executed on $(win.system.computer)</description>
+    <mitre><id>T1082</id></mitre>
+  </rule>
+  <rule id="100103" level="12">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)powershell(\.exe)?"?\s.*(-enc|-encodedcommand)\s</field>
+    <description>Suspicious PowerShell execution with encoded command on $(win.system.computer)</description>
+    <mitre><id>T1059.001</id></mitre>
+  </rule>
+</group>

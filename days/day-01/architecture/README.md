@@ -2,7 +2,7 @@
 
 [Vector diagram](architecture.svg) · [High-resolution diagram](architecture.png) · [PDF diagram](architecture.pdf)
 
-![Tetrion system architecture](architecture.svg)
+![Day 01 system architecture](architecture.svg)
 
 | System | Internal IP | OS / role | RAM | vCPU | Virtual disk | Recorded adapters |
 | :--- | :--- | :--- | ---: | ---: | ---: | :--- |
