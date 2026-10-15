@@ -1,24 +1,24 @@
 <p align="center"><img src="assets/project-hero.svg" alt="Automated SOC Workflow — Roman Rzayev" width="100%"></p>
 
-<p align="center"><strong>BUILD → COLLECT → DETECT → VALIDATE → DOCUMENT</strong></p>
-
 # Automated SOC Workflow
 
-A personal security engineering journal by **Roman Rzayev**. Follow a monitoring environment from its initial network and Wazuh deployment into endpoint telemetry and custom detection rules. Each day combines the actual command sequence, configuration, explanation and retained evidence.
+I’m documenting my SOC setup here: the network, Wazuh deployment, endpoint telemetry and custom rules. Each day includes commands, configuration, results and issues still to resolve.
+
+**Roman Rzayev**
 
 <p align="center"><a href="days/day-01#step-01"><strong>Open Day 01 walkthrough →</strong></a> &nbsp; · &nbsp; <a href="days/day-01#step-12">Read the custom rules</a> &nbsp; · &nbsp; <a href="days/day-01/evidence">Inspect the evidence</a></p>
 
 ![Recorded Day 01 metrics](assets/day-01-metrics.svg)
 
-## The journey
+## Daily notes
 
 | Day | Build focus | Read it here | Evidence status |
 | :--- | :--- | :--- | :--- |
 | **01** | Monitoring foundation · Wazuh · Sysmon · Windows/Linux | **[Commands, full configurations & explanations](days/day-01/README.md)** | Platform and selected alerts recorded; acceptance checks tracked |
 
-Future days will be added as their work is supplied. Each receives its own walkthrough, configuration and evidence set.
+New work will be added under the next day’s folder.
 
-## Day 01 · From infrastructure to detection
+## Day 01 · Wazuh setup
 
 ![Day 01 topology](days/day-01/architecture/architecture.svg)
 
@@ -29,7 +29,7 @@ Future days will be added as their work is supplied. Each receives its own walkt
 | Bidirectional peer tests | Certificate generation and recovery | Apache, SSH and Sysmon | Rule-level result attribution |
 | [Network commands →](days/day-01#step-02) | [Deployment commands →](days/day-01#step-06) | [Endpoint commands →](days/day-01#step-08) | [Rules and explanations →](days/day-01#step-12) |
 
-### A command is only the start
+### Check the stack
 
 For example, from the **existing single-node deployment directory on siem-host**:
 
@@ -71,12 +71,12 @@ The captured inventory lists win-client and ubuntu-web Active on 4.14.7. Full ac
 
 </details>
 
-## Project notebook
+## Reference notes
 
-- **[Complete Day 01 walkthrough](days/day-01/README.md):** commands and configuration are visible inline, with purpose tables and checks.
+- **[Complete Day 01 walkthrough](days/day-01/README.md):** commands, configuration and expandable explanations.
 - **[Detection results](days/day-01/docs/event-validation.md):** recorded rule IDs, levels, descriptions and gaps.
 - **[Evidence register](days/day-01/evidence/README.md):** forty original captures and a source/hash manifest.
-- **[Implementation journal](days/day-01/journal.md):** genuine observed failures, corrections and open actions.
+- **[Implementation journal](days/day-01/journal.md):** failures, corrections and open actions.
 - **[Acceptance matrix](days/day-01/docs/acceptance.md):** the deployment’s remaining validation work.
 
 ## Documentation checks
@@ -86,6 +86,6 @@ python3 scripts/build_readmes.py
 python3 scripts/verify_artifacts.py
 ```
 
-The check verifies evidence hashes/dimensions, local links, inline configuration fidelity, rule expressions and shell syntax. Live VM replay and PowerShell execution require the original environment. Professional report files remain separate from the main personal walkthrough.
+Checks screenshot hashes, links, inline configuration, rule expressions and Bash syntax. It does not run the VMware systems or execute PowerShell.
 
 **Roman Rzayev** · [GitHub](https://github.com/romanrzayev1111-png)

@@ -4,18 +4,18 @@
 
 # Day 01 · Security Monitoring Foundation
 
-Build the monitoring server, onboard two endpoints and follow selected process/authentication events into Wazuh. The commands, network configuration, event-channel configuration and four custom rules are shown **directly on this page**, followed by explanations and checks.
+Day 01 covers the VMware network, Wazuh installation, two endpoint agents and the first detection rules. Commands and configuration are shown below; expand an arrow when you need an explanation.
 
 ![Recorded project metrics](../../assets/day-01-metrics.svg)
 
-| Start here | Continue here | Inspect the results |
+| Network | Services and agents | Results |
 | :--- | :--- | :--- |
 | [01 · Network](#step-01) | [04 · Docker](#step-04) · [06 · Wazuh](#step-06) | [Evidence register](evidence/README.md) |
 | [02 · Full Netplan YAML](#step-02) | [08 · Linux agent](#step-08) · [10 · Windows agent](#step-10) | [Event results](docs/event-validation.md) |
 | [03 · Peer connectivity](#step-03) | [11 · Sysmon](#step-11) · [12 · Full custom XML](#step-12) | [Acceptance matrix](docs/acceptance.md) |
 | [07 · Credential rotation](#step-07) | [13 · Recovery](#step-13) · [14 · Handover](#step-14) | [Implementation journal](journal.md) |
 
-## Recorded architecture
+## Environment
 
 ![Three-system topology](architecture/architecture.svg)
 
@@ -25,7 +25,7 @@ Build the monitoring server, onboard two endpoints and follow selected process/a
 | **ubuntu-web** | `192.168.38.131` | Linux agent, Apache, SSH | Linux administration user with sudo |
 | **win-client** | `192.168.38.133` | Windows agent, Sysmon, test processes | Elevated PowerShell where stated |
 
-## What the deployment demonstrates
+## Results and remaining checks
 
 | Recorded | Still needs acceptance evidence |
 | :--- | :--- |
@@ -38,15 +38,15 @@ Build the monitoring server, onboard two endpoints and follow selected process/a
 
 ![Two Active endpoint agents](evidence/screenshots/image26.png)
 
-E26 records both agents Active on 4.14.7. This is a point-in-time inventory, not a continuous uptime measurement.
+E26 shows win-client and ubuntu-web Active on 4.14.7.
 
 </details>
 
-> **Execution context:** The original VMware systems are not running in this documentation workspace. Source/release checks and command syntax were validated here; the guide does not label unexecuted VM steps as live-tested. Captured results and remaining checks are identified separately.
+> **Validation:** Results below come from the supplied VM captures. Documentation checks cover source versions, syntax and file integrity; the original VMs were not replayed here.
 
-The source release is `v4.14.7`, commit `adcc5b57d2f7edfcbe6c399272dc76fbdf12b623`. Network examples must be merged into each VM’s existing configuration after its interface names and address availability are checked.
+Check each VM’s interface names and address availability before applying the network examples.
 
-## Follow the event
+## Event path
 
 ```mermaid
 flowchart LR
@@ -59,7 +59,7 @@ flowchart LR
     style F fill:#F4F3EF,color:#141A23,stroke:#C6A15A
 ```
 
-The flow is the expected single-node design. The captures establish selected results rather than a full trace of every source event.
+The manager evaluates the event; Filebeat forwards the resulting alert to the indexer for dashboard searches.
 
 
 
@@ -68,7 +68,9 @@ The flow is the expected single-node design. The captures establish selected res
 
 <a id="step-01"></a>
 
-## 1. Prepare the VMs and capture the starting state
+## 1. VMs and network
+
+**Run on:** VMware host
 
 Use the [recorded inventory](architecture/README.md). The source requirement baseline and the actual allocation differ:
 
@@ -84,7 +86,7 @@ Configure **VMnet1 Host-only** on `192.168.38.0/24`. Give siem-host an additiona
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary>Host-only / VMnet1</summary>
@@ -110,7 +112,9 @@ Provide identifiable recovery points. Their names must reflect when they were ac
 
 <a id="step-02"></a>
 
-## 2. Set names and persistent addresses
+## 2. Hostnames and IP addresses
+
+**Run on:** Each VM — use its own hostname and address
 
 Run the appropriate command on each Linux VM:
 
@@ -171,7 +175,7 @@ network:
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>version: 2</code></summary>
@@ -233,7 +237,7 @@ No endpoint default route should remain after temporary NAT is removed. On both 
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>hostnamectl set-hostname</code> / <code>--static</code></summary>
@@ -287,7 +291,9 @@ Checks local clock/time-service state so event timestamps can be correlated.
 
 <a id="step-03"></a>
 
-## 3. Check all peer paths
+## 3. Connectivity tests
+
+**Run on:** All three VMs
 
 On siem-host:
 
@@ -314,7 +320,7 @@ If Windows blocks ICMP, review the inbound ICMP echo rule for the actual network
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary>Linux <code>ping -c 3</code></summary>
@@ -343,7 +349,9 @@ Tests server→Linux, server→Windows, Linux→server, Linux→Windows, Windows
 
 <a id="step-04"></a>
 
-## 4. Install Docker on siem-host
+## 4. Docker installation
+
+**Run on:** siem-host
 
 Use the [official Ubuntu repository procedure](https://docs.docker.com/engine/install/ubuntu/). Check for conflicting packages and an existing Docker installation first; preserve existing workloads. On a fresh supported Ubuntu installation:
 
@@ -373,7 +381,7 @@ Record the installed Engine and Compose versions; the original screenshots do no
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>apt-get update</code> / prerequisite install</summary>
@@ -434,7 +442,9 @@ Records the actual installed tooling; these are separate from the Wazuh applicat
 
 <a id="step-05"></a>
 
-## 5. Persist the indexer kernel prerequisite
+## 5. Indexer kernel setting
+
+**Run on:** siem-host
 
 Inspect existing sysctl configuration first. If the value is missing or too low, set it without lowering an existing higher value:
 
@@ -460,7 +470,7 @@ Recheck after reboot. The minimum is `262144`; a one-time `sysctl -w` alone is n
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>vm.max_map_count</code></summary>
@@ -486,7 +496,9 @@ Reloads the configured sysctl files; a reboot check establishes that the setting
 
 <a id="step-06"></a>
 
-## 6. Deploy Wazuh 4.14.7
+## 6. Wazuh deployment
+
+**Run on:** siem-host
 
 Keep the live upstream deployment **outside this portfolio repository**: it contains local credentials and generated certificates. Reuse an existing checkout if one already exists. On a fresh host, from your administration user's home directory:
 
@@ -510,7 +522,7 @@ Wait for indexer initialization and check the logs. From the **physical operator
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>git clone --depth 1 --branch v4.14.7</code></summary>
@@ -573,7 +585,9 @@ E18 records 4.14.7 containers Up at capture time.
 
 <a id="step-07"></a>
 
-## 7. Rotate the default administrator credential
+## 7. Administrator password
+
+**Run on:** siem-host
 
 This remains an acceptance action, not a completed step in the source evidence. Take a current recovery snapshot and log out of the dashboard. Follow the release-appropriate [Docker password-change procedure](https://documentation.wazuh.com/current/deployment-options/docker/changing-default-password.html).
 
@@ -610,7 +624,7 @@ This hostname is taken from the pinned single-node certificate configuration; ad
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>INDEXER_PASSWORD</code> / <code>internal_users.yml</code></summary>
@@ -674,7 +688,9 @@ Uses the trusted CA and administrative client certificate/key to authenticate th
 
 <a id="step-08"></a>
 
-## 8. Enroll the Linux endpoint
+## 8. Linux agent
+
+**Run on:** ubuntu-web
 
 On ubuntu-web, temporarily enable the installation network if required. Use the [official Linux-agent procedure](https://documentation.wazuh.com/current/installation-guide/wazuh-agent/wazuh-agent-package-linux.html). On a fresh Ubuntu endpoint:
 
@@ -697,7 +713,7 @@ E24 is an intermediate wizard capture with the wrong endpoint address and an RPM
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary>Official key / <code>gpg --dearmor</code> / <code>signed-by</code></summary>
@@ -758,7 +774,9 @@ Returns service state; verify the additional Active inventory state in the dashb
 
 <a id="step-09"></a>
 
-## 9. Install Apache and SSH on ubuntu-web
+## 9. Apache and SSH
+
+**Run on:** ubuntu-web
 
 ```bash
 sudo apt-get install -y apache2 openssh-server
@@ -770,7 +788,7 @@ From the **operator workstation**, open `http://192.168.38.131/`. A local `http:
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>apt-get install apache2 openssh-server</code></summary>
@@ -803,7 +821,9 @@ Tests the actual client-to-server HTTP path; localhost tests only the browser’
 
 <a id="step-10"></a>
 
-## 10. Enroll the Windows endpoint
+## 10. Windows agent
+
+**Run on:** win-client — elevated PowerShell
 
 Run elevated PowerShell. Download the release-matched MSI from the official Wazuh packages endpoint and validate its signature before installation:
 
@@ -822,7 +842,7 @@ On an already installed endpoint, inspect the existing agent and configuration i
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>Join-Path $env:TEMP ...</code> / <code>Invoke-WebRequest</code></summary>
@@ -869,7 +889,9 @@ Starts and then verifies the correct Windows Wazuh service.
 
 <a id="step-11"></a>
 
-## 11. Install Sysmon and configure event-channel collection
+## 11. Sysmon and event collection
+
+**Run on:** win-client — elevated PowerShell
 
 Run elevated PowerShell from a working directory outside Git. The configuration revision below is a reproducible guide reference, not a claim about the exact revision downloaded in the original screenshot:
 
@@ -906,7 +928,7 @@ Confirm the same endpoint/process event in Wazuh. A Running Sysmon service or a 
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary>Sysinternals ZIP + <code>Expand-Archive</code></summary>
@@ -963,7 +985,9 @@ Creates a benign process and looks for recent local Sysmon process-creation even
 
 <a id="step-12"></a>
 
-## 12. Load the captured custom rules and generate test events
+## 12. Custom rules and test events
+
+**Run on:** siem-host for rules; win-client / ubuntu-web for test events
 
 ### 12.1 All four captured rules
 
@@ -1085,7 +1109,7 @@ The corrected document directly records Windows failed-logon rule **60122**, lev
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>group</code></summary>
@@ -1187,7 +1211,9 @@ E34 shows 100100, 100101 and 100102; encoded PowerShell is reported by built-in 
 
 <a id="step-13"></a>
 
-## 13. Measure, restart and verify persistence
+## 13. Resource use and persistence
+
+**Run on:** siem-host
 
 From the existing single-node directory on siem-host:
 
@@ -1208,7 +1234,7 @@ Confirm both agents and the old alert remain. Reboot siem-host using the VM's no
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary><code>docker stats --no-stream</code></summary>
@@ -1241,7 +1267,9 @@ Stops service containers without deleting them. Resume using the existing deploy
 
 <a id="step-14"></a>
 
-## 14. Complete isolation, lifecycle and evidence
+## 14. Final checks
+
+**Run on:** VMware host and each VM, as noted below
 
 Remove temporary endpoint NAT adapters. Capture each VM's final adapter list, Linux routes/Windows default routes and current clocks. Recheck peer connectivity and workstation browser access. Record the Windows evaluation expiry with:
 
@@ -1253,7 +1281,7 @@ Take final snapshots after validation. Record actual results, failures and fixes
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary>Final adapter / route checks</summary>
@@ -1279,13 +1307,15 @@ Captures the state after validation and records the real commands, failures and 
 
 <a id="step-15"></a>
 
-## 15. Day 01 completion gate
+## 15. Remaining work
+
+**Run on:** Review the recorded results
 
 Use the [acceptance matrix](docs/acceptance.md) and [event register](docs/event-validation.md). Required open items include static-address/isolation evidence, credential rotation, Sysmon ingestion, five controlled-event captures, restart/reboot persistence, idle memory and snapshot inventories. A later day can extend this foundation, but it must not erase Day 01's evidence limitations.
 
 
 
-**Explanations — click an arrow to expand**
+**Notes**
 
 <details>
 <summary>Recorded</summary>
@@ -1319,6 +1349,6 @@ Required evidence remains absent; the implementation is not represented as fully
 
 ---
 
-**Continue the project:** [All days](../../README.md) · [Command/rule index](docs/command-and-rule-index.md) · [Original screenshots](evidence/README.md) · [Operations handover](docs/operations.md)
+**Related notes:** [All days](../../README.md) · [Command/rule index](docs/command-and-rule-index.md) · [Original screenshots](evidence/README.md) · [Operations handover](docs/operations.md)
 
-The professional report is delivered separately. This is Roman Rzayev’s personal implementation record.
+Prepared by Roman Rzayev.

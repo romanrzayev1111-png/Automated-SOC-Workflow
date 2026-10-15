@@ -10,7 +10,7 @@ The evidence set contains **40 unique images**: 37 from the corrected `windows.d
 
 The pinned Wazuh source used for this guide is tag `v4.14.7`, commit `adcc5b57d2f7edfcbe6c399272dc76fbdf12b623`. Its Compose service names, images, certificate generator and published ports were checked directly. Docker installation instructions were checked against Docker's official Ubuntu documentation.
 
-## 1. Prepare the VMs and capture the starting state
+## 1. VMs and network
 
 Use the [recorded inventory](architecture/README.md). The source requirement baseline and the actual allocation differ:
 
@@ -24,7 +24,7 @@ Decide the approved capacity before provisioning. Do not try to shrink existing 
 
 Configure **VMnet1 Host-only** on `192.168.38.0/24`. Give siem-host an additional NAT adapter. Endpoints may temporarily use NAT for software installation; remove those endpoint adapters afterwards and retain the final route/adapter output.
 
-## 2. Set names and persistent addresses
+## 2. Hostnames and IP addresses
 
 Run the appropriate command on each Linux VM:
 
@@ -73,7 +73,7 @@ w32tm /query /status
 
 No endpoint default route should remain after temporary NAT is removed. On both Linux systems, retain `timedatectl status`; Windows uses the PowerShell/time-service commands above, not `timedatectl`.
 
-## 3. Check all peer paths
+## 3. Connectivity tests
 
 On siem-host:
 
@@ -98,7 +98,7 @@ ping -n 4 192.168.38.132
 
 If Windows blocks ICMP, review the inbound ICMP echo rule for the actual network profile and restrict it to the host-only subnet. Keep the firewall enabled. The supplied E08–E10 captures show replies on all six paths.
 
-## 4. Install Docker on siem-host
+## 4. Docker installation
 
 Use the [official Ubuntu repository procedure](https://docs.docker.com/engine/install/ubuntu/). Check for conflicting packages and an existing Docker installation first; preserve existing workloads. On a fresh supported Ubuntu installation:
 
@@ -126,7 +126,7 @@ docker compose version
 
 Record the installed Engine and Compose versions; the original screenshots do not provide them. The examples use `sudo docker` consistently. The original deployment used a root shell, which explains the absence of sudo in its captures.
 
-## 5. Persist the indexer kernel prerequisite
+## 5. Indexer kernel setting
 
 Inspect existing sysctl configuration first. If the value is missing or too low, set it without lowering an existing higher value:
 
@@ -150,7 +150,7 @@ sysctl vm.max_map_count
 
 Recheck after reboot. The minimum is `262144`; a one-time `sysctl -w` alone is not persistence evidence.
 
-## 6. Deploy Wazuh 4.14.7
+## 6. Wazuh deployment
 
 Keep the live upstream deployment **outside this portfolio repository**: it contains local credentials and generated certificates. Reuse an existing checkout if one already exists. On a fresh host, from your administration user's home directory:
 
@@ -172,7 +172,7 @@ The release uses manager/indexer/dashboard images `4.14.7`, certificate generato
 
 Wait for indexer initialization and check the logs. From the **physical operator workstation**, open `https://192.168.38.132/`. A self-signed/private CA certificate can produce a browser trust warning; inspect its issuer and SAN. Establish trust using the deployment CA and a hostname that matches the certificate. Do not use disabled TLS verification as a substitute for a correct trust configuration.
 
-## 7. Rotate the default administrator credential
+## 7. Administrator password
 
 This remains an acceptance action, not a completed step in the source evidence. Take a current recovery snapshot and log out of the dashboard. Follow the release-appropriate [Docker password-change procedure](https://documentation.wazuh.com/current/deployment-options/docker/changing-default-password.html).
 
@@ -207,7 +207,7 @@ exit
 
 This hostname is taken from the pinned single-node certificate configuration; adjust to your actual certificate SAN if you customized it. Resolve certificate/CA failures rather than adding hostname-verification bypass flags. Confirm the administration tool reports success and fresh dashboard authentication works. This command sequence is documented here, not executed in this workspace.
 
-## 8. Enroll the Linux endpoint
+## 8. Linux agent
 
 On ubuntu-web, temporarily enable the installation network if required. Use the [official Linux-agent procedure](https://documentation.wazuh.com/current/installation-guide/wazuh-agent/wazuh-agent-package-linux.html). On a fresh Ubuntu endpoint:
 
@@ -228,7 +228,7 @@ systemctl is-active wazuh-agent
 
 E24 is an intermediate wizard capture with the wrong endpoint address and an RPM selection; Ubuntu uses the DEB/APT procedure here and manager .132. Confirm the pinned package is available before installation; never silently upgrade an agent past its manager. Reuse existing enrolled agents rather than reinstalling them. The expected inventory name is `ubuntu-web`, and the manager address is `.132`, not the endpoint's own IP.
 
-## 9. Install Apache and SSH on ubuntu-web
+## 9. Apache and SSH
 
 ```bash
 sudo apt-get install -y apache2 openssh-server
@@ -238,7 +238,7 @@ systemctl is-active apache2 ssh wazuh-agent
 
 From the **operator workstation**, open `http://192.168.38.131/`. A local `http://localhost/` page inside the VM does not prove workstation reachability. E13 shows Apache Running; E14 shows the default page, but its URL is localhost, so it does not prove physical-workstation reachability.
 
-## 10. Enroll the Windows endpoint
+## 10. Windows agent
 
 Run elevated PowerShell. Download the release-matched MSI from the official Wazuh packages endpoint and validate its signature before installation:
 
@@ -255,7 +255,7 @@ Get-Service WazuhSvc
 
 On an already installed endpoint, inspect the existing agent and configuration instead of rerunning the installer. Exit 3010 indicates a reboot is needed. The successful service name in the supplied record is `WazuhSvc`; the earlier E22 start error is followed by success. Verify `win-client` Active in the dashboard.
 
-## 11. Install Sysmon and configure event-channel collection
+## 11. Sysmon and event collection
 
 Run elevated PowerShell from a working directory outside Git. The configuration revision below is a reproducible guide reference, not a claim about the exact revision downloaded in the original screenshot:
 
@@ -290,7 +290,7 @@ Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Sysmon/Operational'; 
 
 Confirm the same endpoint/process event in Wazuh. A Running Sysmon service or a local Event ID 1 is not, by itself, proof of dashboard ingestion. If the chosen community configuration excludes the process, use a permitted test process and record it; do not disable filtering merely to produce a success screenshot.
 
-## 12. Load the captured custom rules and generate test events
+## 12. Custom rules and test events
 
 ### 12.1 All four captured rules
 
@@ -376,7 +376,7 @@ Add `@timestamp`, `agent.name`, `rule.id`, `rule.level` and `rule.description` t
 
 The corrected document directly records Windows failed-logon rule **60122**, level **5** (E32). E34 shows custom discovery IDs **100100/10**, **100101/9** and **100102/8**. It shows built-in encoded-PowerShell rule **92057/12**; the separately defined **100103/12** is not shown firing. E36–E37 pair a genuine failed SSH test with rule **5710/5**, but the alert crop omits the agent and timestamp. Successful sudo and user creation still need evidence. The `too_many_nested_clauses` repair is mentioned in the conversation without its actual configuration change, so no fix is invented here.
 
-## 13. Measure, restart and verify persistence
+## 13. Resource use and persistence
 
 From the existing single-node directory on siem-host:
 
@@ -395,7 +395,7 @@ sudo docker compose ps
 
 Confirm both agents and the old alert remain. Reboot siem-host using the VM's normal authorized operating procedure, then repeat those checks and verify `sysctl vm.max_map_count`. A successful process start alone is not a persistence result. Use `docker compose stop` for ordinary shutdown; do not add `-v` to teardown commands.
 
-## 14. Complete isolation, lifecycle and evidence
+## 14. Final checks
 
 Remove temporary endpoint NAT adapters. Capture each VM's final adapter list, Linux routes/Windows default routes and current clocks. Recheck peer connectivity and workstation browser access. Record the Windows evaluation expiry with:
 
@@ -405,7 +405,7 @@ slmgr.vbs /xpr
 
 Take final snapshots after validation. Record actual results, failures and fixes in [journal.md](journal.md). Retain the source pixel resolution when capturing screenshots and avoid including secret values.
 
-## 15. Day 01 completion gate
+## 15. Remaining work
 
 Use the [acceptance matrix](docs/acceptance.md) and [event register](docs/event-validation.md). Required open items include static-address/isolation evidence, credential rotation, Sysmon ingestion, five controlled-event captures, restart/reboot persistence, idle memory and snapshot inventories. A later day can extend this foundation, but it must not erase Day 01's evidence limitations.
 

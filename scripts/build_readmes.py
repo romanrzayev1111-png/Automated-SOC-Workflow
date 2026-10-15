@@ -29,7 +29,7 @@ def scorecard():
 
 
 def explanation(rows, label='Command / setting'):
-    panels = ['\n\n**Explanations — click an arrow to expand**\n']
+    panels = ['\n\n**Notes**\n']
     for command, purpose in rows:
         summary = re.sub(r'`([^`]+)`', r'<code>\1</code>', escape(command))
         panels.append(f'<details>\n<summary>{summary}</summary>\n\n{purpose}\n\n</details>\n')
@@ -65,7 +65,7 @@ def inline_netplan():
 
 def make_day():
     guide = (DAY / 'step-by-step.md').read_text()
-    body = guide[guide.index('## 1. Prepare'):]
+    body = guide[re.search(r'^## 1\.', guide, re.M).start():]
     parts = re.split(r'(?=^## \d+\.)', body, flags=re.M)
     rendered = []
     banners = {1: ('design-network.svg', 'Foundation & network'), 4: ('platform.svg', 'Platform deployment'), 8: ('endpoints.svg', 'Endpoint onboarding'), 12: ('detections.svg', 'Detection engineering')}
@@ -75,6 +75,21 @@ def make_day():
             rendered.append(part)
             continue
         n = int(match[1])
+        location = {
+            1: 'VMware host',
+            2: 'Each VM — use its own hostname and address',
+            3: 'All three VMs',
+            4: 'siem-host', 5: 'siem-host', 6: 'siem-host', 7: 'siem-host',
+            8: 'ubuntu-web', 9: 'ubuntu-web',
+            10: 'win-client — elevated PowerShell',
+            11: 'win-client — elevated PowerShell',
+            12: 'siem-host for rules; win-client / ubuntu-web for test events',
+            13: 'siem-host',
+            14: 'VMware host and each VM, as noted below',
+            15: 'Review the recorded results',
+        }[n]
+        heading, rest = part.split('\n', 1)
+        part = heading + '\n\n**Run on:** ' + location + '\n\n' + rest.lstrip('\n')
         if n == 2:
             part = part.replace('From the VM console, validate and trial the edited configuration:', inline_netplan() + '\nFrom the VM console, validate and trial the edited configuration:')
         if n == 12:
@@ -102,18 +117,18 @@ def make_day():
 
 # Day 01 · Security Monitoring Foundation
 
-Build the monitoring server, onboard two endpoints and follow selected process/authentication events into Wazuh. The commands, network configuration, event-channel configuration and four custom rules are shown **directly on this page**, followed by explanations and checks.
+Day 01 covers the VMware network, Wazuh installation, two endpoint agents and the first detection rules. Commands and configuration are shown below; expand an arrow when you need an explanation.
 
 ![Recorded project metrics](../../assets/day-01-metrics.svg)
 
-| Start here | Continue here | Inspect the results |
+| Network | Services and agents | Results |
 | :--- | :--- | :--- |
 | [01 · Network](#step-01) | [04 · Docker](#step-04) · [06 · Wazuh](#step-06) | [Evidence register](evidence/README.md) |
 | [02 · Full Netplan YAML](#step-02) | [08 · Linux agent](#step-08) · [10 · Windows agent](#step-10) | [Event results](docs/event-validation.md) |
 | [03 · Peer connectivity](#step-03) | [11 · Sysmon](#step-11) · [12 · Full custom XML](#step-12) | [Acceptance matrix](docs/acceptance.md) |
 | [07 · Credential rotation](#step-07) | [13 · Recovery](#step-13) · [14 · Handover](#step-14) | [Implementation journal](journal.md) |
 
-## Recorded architecture
+## Environment
 
 ![Three-system topology](architecture/architecture.svg)
 
@@ -123,7 +138,7 @@ Build the monitoring server, onboard two endpoints and follow selected process/a
 | **ubuntu-web** | `192.168.38.131` | Linux agent, Apache, SSH | Linux administration user with sudo |
 | **win-client** | `192.168.38.133` | Windows agent, Sysmon, test processes | Elevated PowerShell where stated |
 
-## What the deployment demonstrates
+## Results and remaining checks
 
 | Recorded | Still needs acceptance evidence |
 | :--- | :--- |
@@ -136,15 +151,15 @@ Build the monitoring server, onboard two endpoints and follow selected process/a
 
 ![Two Active endpoint agents](evidence/screenshots/image26.png)
 
-E26 records both agents Active on 4.14.7. This is a point-in-time inventory, not a continuous uptime measurement.
+E26 shows win-client and ubuntu-web Active on 4.14.7.
 
 </details>
 
-> **Execution context:** The original VMware systems are not running in this documentation workspace. Source/release checks and command syntax were validated here; the guide does not label unexecuted VM steps as live-tested. Captured results and remaining checks are identified separately.
+> **Validation:** Results below come from the supplied VM captures. Documentation checks cover source versions, syntax and file integrity; the original VMs were not replayed here.
 
-The source release is `v4.14.7`, commit `adcc5b57d2f7edfcbe6c399272dc76fbdf12b623`. Network examples must be merged into each VM’s existing configuration after its interface names and address availability are checked.
+Check each VM’s interface names and address availability before applying the network examples.
 
-## Follow the event
+## Event path
 
 ```mermaid
 flowchart LR
@@ -157,15 +172,15 @@ flowchart LR
     style F fill:#F4F3EF,color:#141A23,stroke:#C6A15A
 ```
 
-The flow is the expected single-node design. The captures establish selected results rather than a full trace of every source event.
+The manager evaluates the event; Filebeat forwards the resulting alert to the indexer for dashboard searches.
 
 '''
     footer = '''
 ---
 
-**Continue the project:** [All days](../../README.md) · [Command/rule index](docs/command-and-rule-index.md) · [Original screenshots](evidence/README.md) · [Operations handover](docs/operations.md)
+**Related notes:** [All days](../../README.md) · [Command/rule index](docs/command-and-rule-index.md) · [Original screenshots](evidence/README.md) · [Operations handover](docs/operations.md)
 
-The professional report is delivered separately. This is Roman Rzayev’s personal implementation record.
+Prepared by Roman Rzayev.
 '''
     (DAY / 'README.md').write_text(intro + '\n'.join(rendered) + footer)
 
@@ -173,25 +188,25 @@ The professional report is delivered separately. This is Roman Rzayev’s person
 def make_root():
     (ROOT / 'README.md').write_text('''<p align="center"><img src="assets/project-hero.svg" alt="Automated SOC Workflow — Roman Rzayev" width="100%"></p>
 
-<p align="center"><strong>BUILD → COLLECT → DETECT → VALIDATE → DOCUMENT</strong></p>
-
 # Automated SOC Workflow
 
-A personal security engineering journal by **Roman Rzayev**. Follow a monitoring environment from its initial network and Wazuh deployment into endpoint telemetry and custom detection rules. Each day combines the actual command sequence, configuration, explanation and retained evidence.
+I’m documenting my SOC setup here: the network, Wazuh deployment, endpoint telemetry and custom rules. Each day includes commands, configuration, results and issues still to resolve.
+
+**Roman Rzayev**
 
 <p align="center"><a href="days/day-01#step-01"><strong>Open Day 01 walkthrough →</strong></a> &nbsp; · &nbsp; <a href="days/day-01#step-12">Read the custom rules</a> &nbsp; · &nbsp; <a href="days/day-01/evidence">Inspect the evidence</a></p>
 
 ![Recorded Day 01 metrics](assets/day-01-metrics.svg)
 
-## The journey
+## Daily notes
 
 | Day | Build focus | Read it here | Evidence status |
 | :--- | :--- | :--- | :--- |
 | **01** | Monitoring foundation · Wazuh · Sysmon · Windows/Linux | **[Commands, full configurations & explanations](days/day-01/README.md)** | Platform and selected alerts recorded; acceptance checks tracked |
 
-Future days will be added as their work is supplied. Each receives its own walkthrough, configuration and evidence set.
+New work will be added under the next day’s folder.
 
-## Day 01 · From infrastructure to detection
+## Day 01 · Wazuh setup
 
 ![Day 01 topology](days/day-01/architecture/architecture.svg)
 
@@ -202,7 +217,7 @@ Future days will be added as their work is supplied. Each receives its own walkt
 | Bidirectional peer tests | Certificate generation and recovery | Apache, SSH and Sysmon | Rule-level result attribution |
 | [Network commands →](days/day-01#step-02) | [Deployment commands →](days/day-01#step-06) | [Endpoint commands →](days/day-01#step-08) | [Rules and explanations →](days/day-01#step-12) |
 
-### A command is only the start
+### Check the stack
 
 For example, from the **existing single-node deployment directory on siem-host**:
 
@@ -244,12 +259,12 @@ The captured inventory lists win-client and ubuntu-web Active on 4.14.7. Full ac
 
 </details>
 
-## Project notebook
+## Reference notes
 
-- **[Complete Day 01 walkthrough](days/day-01/README.md):** commands and configuration are visible inline, with purpose tables and checks.
+- **[Complete Day 01 walkthrough](days/day-01/README.md):** commands, configuration and expandable explanations.
 - **[Detection results](days/day-01/docs/event-validation.md):** recorded rule IDs, levels, descriptions and gaps.
 - **[Evidence register](days/day-01/evidence/README.md):** forty original captures and a source/hash manifest.
-- **[Implementation journal](days/day-01/journal.md):** genuine observed failures, corrections and open actions.
+- **[Implementation journal](days/day-01/journal.md):** failures, corrections and open actions.
 - **[Acceptance matrix](days/day-01/docs/acceptance.md):** the deployment’s remaining validation work.
 
 ## Documentation checks
@@ -259,21 +274,21 @@ python3 scripts/build_readmes.py
 python3 scripts/verify_artifacts.py
 ```
 
-The check verifies evidence hashes/dimensions, local links, inline configuration fidelity, rule expressions and shell syntax. Live VM replay and PowerShell execution require the original environment. Professional report files remain separate from the main personal walkthrough.
+Checks screenshot hashes, links, inline configuration, rule expressions and Bash syntax. It does not run the VMware systems or execute PowerShell.
 
 **Roman Rzayev** · [GitHub](https://github.com/romanrzayev1111-png)
 ''')
 
 
 if __name__ == '__main__':
-    hero('project-hero.svg', 'PERSONAL SECURITY ENGINEERING PORTFOLIO', 'Automated SOC Workflow', 'Build the platform. Follow the telemetry. Explain the detection.')
-    hero('day-01-hero.svg', 'IMPLEMENTATION WALKTHROUGH / DAY 01', 'Security Monitoring Foundation', 'Commands, configuration, detection rules and the evidence behind them.', True)
+    hero('project-hero.svg', 'ROMAN RZAYEV / PROJECT NOTES', 'Automated SOC Workflow', 'Wazuh deployment, Windows/Linux agents and Sysmon detection rules.')
+    hero('day-01-hero.svg', 'DAY 01 / SETUP NOTES', 'Security Monitoring Foundation', 'VMware network, Wazuh 4.14.7, endpoint agents and custom rules.', True)
     scorecard()
     for filename, number, title, subtitle in [
         ('design-network.svg', '01', 'Foundation & network', 'Provision → name → address → verify connectivity'),
         ('platform.svg', '02', 'Monitoring platform', 'Docker → kernel prerequisites → Wazuh → credential lifecycle'),
         ('endpoints.svg', '03', 'Endpoint telemetry', 'Linux agent → Apache / SSH → Windows agent → Sysmon'),
-        ('detections.svg', '04', 'Detection engineering', 'Read the full XML → validate → generate events → attribute results'),
+        ('detections.svg', '04', 'Detection engineering', 'Custom XML → rule validation → test events → results'),
     ]:
         section_image(filename, number, title, subtitle)
     make_day()
