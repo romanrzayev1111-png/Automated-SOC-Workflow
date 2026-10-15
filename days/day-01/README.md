@@ -84,13 +84,28 @@ Configure **VMnet1 Host-only** on `192.168.38.0/24`. Give siem-host an additiona
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| Host-only / VMnet1 | Places all three systems on the same private virtual network; external routing is not supplied by this mode. |
-| Server NAT adapter | Allows the monitoring server to download packages/images. Endpoints use temporary NAT only during installation. |
-| Starting and final snapshots | Provide identifiable recovery points. Their names must reflect when they were actually taken. |
+<details>
+<summary>Host-only / VMnet1</summary>
+
+Places all three systems on the same private virtual network; external routing is not supplied by this mode.
+
+</details>
+
+<details>
+<summary>Server NAT adapter</summary>
+
+Allows the monitoring server to download packages/images. Endpoints use temporary NAT only during installation.
+
+</details>
+
+<details>
+<summary>Starting and final snapshots</summary>
+
+Provide identifiable recovery points. Their names must reflect when they were actually taken.
+
+</details>
 
 
 <a id="step-02"></a>
@@ -156,15 +171,42 @@ network:
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| YAML field | Explanation |
-| :--- | :--- |
-| `version: 2` | Uses the Netplan configuration schema. |
-| Server `ens33: dhcp4: true` | Retains DHCP on the observed NAT-side server interface. |
-| Server `ens36` / endpoint `ens33` | Uses the host-only interface names from the supplied captures; verify them locally before applying. |
-| `dhcp4: false` + `addresses` | Requests the specified persistent IPv4 address on the host-only interface. |
-| No host-only gateway | Does not intentionally create an IPv4 internet default route on either endpoint. Verify final routes and IPv6 separately. |
+<details>
+<summary><code>version: 2</code></summary>
+
+Uses the Netplan configuration schema.
+
+</details>
+
+<details>
+<summary>Server <code>ens33: dhcp4: true</code></summary>
+
+Retains DHCP on the observed NAT-side server interface.
+
+</details>
+
+<details>
+<summary>Server <code>ens36</code> / endpoint <code>ens33</code></summary>
+
+Uses the host-only interface names from the supplied captures; verify them locally before applying.
+
+</details>
+
+<details>
+<summary><code>dhcp4: false</code> + <code>addresses</code></summary>
+
+Requests the specified persistent IPv4 address on the host-only interface.
+
+</details>
+
+<details>
+<summary>No host-only gateway</summary>
+
+Does not intentionally create an IPv4 internet default route on either endpoint. Verify final routes and IPv6 separately.
+
+</details>
 
 From the VM console, validate and trial the edited configuration:
 
@@ -191,17 +233,56 @@ No endpoint default route should remain after temporary NAT is removed. On both 
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| `hostnamectl set-hostname` / `--static` | Changes the persistent Linux machine name, then reads it back so the target can be identified in later evidence. |
-| `netplan generate` | Validates the merged Netplan configuration and generates backend files before the network is changed. |
-| `netplan try` | Applies a temporary trial with rollback; confirm it at the VM console after checking connectivity. |
-| `ip -br address` / `ip route` | Shows interface addresses and the routes that determine whether traffic can leave the isolated network. |
-| `hostname` / `Get-NetIPConfiguration` | Reads the Windows computer name, addresses, gateway and adapter details. |
-| `Get-NetRoute ... 0.0.0.0/0` | Looks for an IPv4 default route; a final host-only endpoint should not retain an internet gateway. |
-| `Get-Date`, `w32tm`, `timedatectl status` | Checks local clock/time-service state so event timestamps can be correlated. |
+<details>
+<summary><code>hostnamectl set-hostname</code> / <code>--static</code></summary>
+
+Changes the persistent Linux machine name, then reads it back so the target can be identified in later evidence.
+
+</details>
+
+<details>
+<summary><code>netplan generate</code></summary>
+
+Validates the merged Netplan configuration and generates backend files before the network is changed.
+
+</details>
+
+<details>
+<summary><code>netplan try</code></summary>
+
+Applies a temporary trial with rollback; confirm it at the VM console after checking connectivity.
+
+</details>
+
+<details>
+<summary><code>ip -br address</code> / <code>ip route</code></summary>
+
+Shows interface addresses and the routes that determine whether traffic can leave the isolated network.
+
+</details>
+
+<details>
+<summary><code>hostname</code> / <code>Get-NetIPConfiguration</code></summary>
+
+Reads the Windows computer name, addresses, gateway and adapter details.
+
+</details>
+
+<details>
+<summary><code>Get-NetRoute ... 0.0.0.0/0</code></summary>
+
+Looks for an IPv4 default route; a final host-only endpoint should not retain an internet gateway.
+
+</details>
+
+<details>
+<summary><code>Get-Date</code>, <code>w32tm</code>, <code>timedatectl status</code></summary>
+
+Checks local clock/time-service state so event timestamps can be correlated.
+
+</details>
 
 
 <a id="step-03"></a>
@@ -233,13 +314,28 @@ If Windows blocks ICMP, review the inbound ICMP echo rule for the actual network
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| Linux `ping -c 3` | Sends three ICMP requests to the named peer; retain the replies and packet-loss summary. |
-| Windows `ping -n 4` | Sends four requests. Windows uses `-n` for the count; the Linux command uses `-c`. |
-| All six directed paths | Tests server→Linux, server→Windows, Linux→server, Linux→Windows, Windows→Linux and Windows→server. |
+<details>
+<summary>Linux <code>ping -c 3</code></summary>
+
+Sends three ICMP requests to the named peer; retain the replies and packet-loss summary.
+
+</details>
+
+<details>
+<summary>Windows <code>ping -n 4</code></summary>
+
+Sends four requests. Windows uses `-n` for the count; the Linux command uses `-c`.
+
+</details>
+
+<details>
+<summary>All six directed paths</summary>
+
+Tests server→Linux, server→Windows, Linux→server, Linux→Windows, Windows→Linux and Windows→server.
+
+</details>
 
 
 ![Platform deployment](../../assets/platform.svg)
@@ -277,18 +373,63 @@ Record the installed Engine and Compose versions; the original screenshots do no
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| `apt-get update` / prerequisite install | Refreshes repository metadata and installs HTTPS certificates, curl and Git. |
-| `install -d` / `curl -fsSL .../gpg` / `chmod a+r` | Creates the keyring directory, retrieves Docker’s official repository key over verified HTTPS and makes it readable to APT. |
-| `tee ...docker.sources` | Writes the Docker APT source with the local Ubuntu codename and CPU architecture; `Signed-By` scopes trust to the Docker key. |
-| `docker-ce`, `docker-ce-cli`, `containerd.io` | Installs the engine, command-line client and container runtime. |
-| `docker-buildx-plugin`, `docker-compose-plugin` | Adds the build extension and the `docker compose` multi-service command. |
-| `systemctl enable --now docker` | Starts the daemon now and enables it at boot. |
-| `docker run --rm hello-world` | Exercises image retrieval and container execution; removes the test container after exit. |
-| `docker --version` / `docker compose version` | Records the actual installed tooling; these are separate from the Wazuh application version. |
+<details>
+<summary><code>apt-get update</code> / prerequisite install</summary>
+
+Refreshes repository metadata and installs HTTPS certificates, curl and Git.
+
+</details>
+
+<details>
+<summary><code>install -d</code> / <code>curl -fsSL .../gpg</code> / <code>chmod a+r</code></summary>
+
+Creates the keyring directory, retrieves Docker’s official repository key over verified HTTPS and makes it readable to APT.
+
+</details>
+
+<details>
+<summary><code>tee ...docker.sources</code></summary>
+
+Writes the Docker APT source with the local Ubuntu codename and CPU architecture; `Signed-By` scopes trust to the Docker key.
+
+</details>
+
+<details>
+<summary><code>docker-ce</code>, <code>docker-ce-cli</code>, <code>containerd.io</code></summary>
+
+Installs the engine, command-line client and container runtime.
+
+</details>
+
+<details>
+<summary><code>docker-buildx-plugin</code>, <code>docker-compose-plugin</code></summary>
+
+Adds the build extension and the `docker compose` multi-service command.
+
+</details>
+
+<details>
+<summary><code>systemctl enable --now docker</code></summary>
+
+Starts the daemon now and enables it at boot.
+
+</details>
+
+<details>
+<summary><code>docker run --rm hello-world</code></summary>
+
+Exercises image retrieval and container execution; removes the test container after exit.
+
+</details>
+
+<details>
+<summary><code>docker --version</code> / <code>docker compose version</code></summary>
+
+Records the actual installed tooling; these are separate from the Wazuh application version.
+
+</details>
 
 
 <a id="step-05"></a>
@@ -319,13 +460,28 @@ Recheck after reboot. The minimum is `262144`; a one-time `sysctl -w` alone is n
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| `vm.max_map_count` | Limits memory mappings per process. The indexer needs at least 262144; this is not a RAM allocation. |
-| `sudoedit ...99-wazuh-max-map-count.conf` | Edits a persistent sysctl drop-in. Preserve a higher existing setting. |
-| `sysctl --system` | Reloads the configured sysctl files; a reboot check establishes that the setting persists. |
+<details>
+<summary><code>vm.max_map_count</code></summary>
+
+Limits memory mappings per process. The indexer needs at least 262144; this is not a RAM allocation.
+
+</details>
+
+<details>
+<summary><code>sudoedit ...99-wazuh-max-map-count.conf</code></summary>
+
+Edits a persistent sysctl drop-in. Preserve a higher existing setting.
+
+</details>
+
+<details>
+<summary><code>sysctl --system</code></summary>
+
+Reloads the configured sysctl files; a reboot check establishes that the setting persists.
+
+</details>
 
 
 <a id="step-06"></a>
@@ -354,17 +510,56 @@ Wait for indexer initialization and check the logs. From the **physical operator
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| `git clone --depth 1 --branch v4.14.7` | Fetches the selected release without unrelated history. A release-tag checkout is expected to have a detached HEAD. |
-| `git rev-parse HEAD` | Checks the source against the recorded full commit instead of trusting a folder name. |
-| `cd single-node` | Selects the Compose model for the one-server deployment. |
-| `-f generate-indexer-certs.yml run --rm generator` | Runs the release certificate generator once during initial provisioning and removes its temporary container. |
-| `docker compose up -d` | Creates/starts the stack in the background using the private deployment configuration. |
-| `docker compose ps` | Shows the service containers and current states. |
-| `docker compose logs --tail=100 ...` | Reads recent indexer, manager and dashboard output to diagnose initialization problems. |
+<details>
+<summary><code>git clone --depth 1 --branch v4.14.7</code></summary>
+
+Fetches the selected release without unrelated history. A release-tag checkout is expected to have a detached HEAD.
+
+</details>
+
+<details>
+<summary><code>git rev-parse HEAD</code></summary>
+
+Checks the source against the recorded full commit instead of trusting a folder name.
+
+</details>
+
+<details>
+<summary><code>cd single-node</code></summary>
+
+Selects the Compose model for the one-server deployment.
+
+</details>
+
+<details>
+<summary><code>-f generate-indexer-certs.yml run --rm generator</code></summary>
+
+Runs the release certificate generator once during initial provisioning and removes its temporary container.
+
+</details>
+
+<details>
+<summary><code>docker compose up -d</code></summary>
+
+Creates/starts the stack in the background using the private deployment configuration.
+
+</details>
+
+<details>
+<summary><code>docker compose ps</code></summary>
+
+Shows the service containers and current states.
+
+</details>
+
+<details>
+<summary><code>docker compose logs --tail=100 ...</code></summary>
+
+Reads recent indexer, manager and dashboard output to diagnose initialization problems.
+
+</details>
 
 <details>
 <summary><strong>Recorded result · three Wazuh containers</strong></summary>
@@ -415,18 +610,63 @@ This hostname is taken from the pinned single-node certificate configuration; ad
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| `INDEXER_PASSWORD` / `internal_users.yml` | The dependent services and indexer user hash must agree on the new credential. These are private runtime files. |
-| `docker compose down` | Stops/removes service containers and network while retaining named volumes when `-v` is absent. |
-| Indexer `hash.sh` | Prompts interactively and derives the password hash; avoids placing the plaintext credential in the command line. |
-| `compose exec wazuh.indexer bash` | Enters the running indexer container so its local certificate and security tools can be used. |
-| `JAVA_HOME` | Selects the Java runtime bundled with the indexer. |
-| `securityadmin.sh -f ... -t internalusers` | Applies the specified internal-user configuration rather than overwriting unrelated security configuration. |
-| `-h wazuh.indexer -p 9200 -icl` | Targets the certificate-matching node name/HTTPS port; `-icl` ignores the cluster-name check, not TLS verification. |
-| `-cacert`, `-cert`, `-key` | Uses the trusted CA and administrative client certificate/key to authenticate the security configuration update. |
+<details>
+<summary><code>INDEXER_PASSWORD</code> / <code>internal_users.yml</code></summary>
+
+The dependent services and indexer user hash must agree on the new credential. These are private runtime files.
+
+</details>
+
+<details>
+<summary><code>docker compose down</code></summary>
+
+Stops/removes service containers and network while retaining named volumes when `-v` is absent.
+
+</details>
+
+<details>
+<summary>Indexer <code>hash.sh</code></summary>
+
+Prompts interactively and derives the password hash; avoids placing the plaintext credential in the command line.
+
+</details>
+
+<details>
+<summary><code>compose exec wazuh.indexer bash</code></summary>
+
+Enters the running indexer container so its local certificate and security tools can be used.
+
+</details>
+
+<details>
+<summary><code>JAVA_HOME</code></summary>
+
+Selects the Java runtime bundled with the indexer.
+
+</details>
+
+<details>
+<summary><code>securityadmin.sh -f ... -t internalusers</code></summary>
+
+Applies the specified internal-user configuration rather than overwriting unrelated security configuration.
+
+</details>
+
+<details>
+<summary><code>-h wazuh.indexer -p 9200 -icl</code></summary>
+
+Targets the certificate-matching node name/HTTPS port; `-icl` ignores the cluster-name check, not TLS verification.
+
+</details>
+
+<details>
+<summary><code>-cacert</code>, <code>-cert</code>, <code>-key</code></summary>
+
+Uses the trusted CA and administrative client certificate/key to authenticate the security configuration update.
+
+</details>
 
 
 ![Endpoint onboarding](../../assets/endpoints.svg)
@@ -457,18 +697,63 @@ E24 is an intermediate wizard capture with the wrong endpoint address and an RPM
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| Official key / `gpg --dearmor` / `signed-by` | Builds an APT keyring and ties the Wazuh package source to it; package signature verification stays enabled. |
-| `apt-cache policy wazuh-agent` | Checks which versions the configured repository offers before selecting one. |
-| `WAZUH_MANAGER=192.168.38.132` | Points enrollment and event delivery at the monitoring server, not at the endpoint itself. |
-| `WAZUH_AGENT_NAME=ubuntu-web` | Sets the intended Linux endpoint identity. |
-| `wazuh-agent=4.14.7-1` | Pins the package to the manager’s release line instead of silently selecting a newer agent. |
-| `daemon-reload` / `enable --now` | Refreshes systemd’s unit view, enables boot startup and starts the installed agent. |
-| `apt-mark hold` | Prevents an unrelated package upgrade from moving this agent beyond the chosen manager version. |
-| `systemctl is-active` | Returns service state; verify the additional Active inventory state in the dashboard. |
+<details>
+<summary>Official key / <code>gpg --dearmor</code> / <code>signed-by</code></summary>
+
+Builds an APT keyring and ties the Wazuh package source to it; package signature verification stays enabled.
+
+</details>
+
+<details>
+<summary><code>apt-cache policy wazuh-agent</code></summary>
+
+Checks which versions the configured repository offers before selecting one.
+
+</details>
+
+<details>
+<summary><code>WAZUH_MANAGER=192.168.38.132</code></summary>
+
+Points enrollment and event delivery at the monitoring server, not at the endpoint itself.
+
+</details>
+
+<details>
+<summary><code>WAZUH_AGENT_NAME=ubuntu-web</code></summary>
+
+Sets the intended Linux endpoint identity.
+
+</details>
+
+<details>
+<summary><code>wazuh-agent=4.14.7-1</code></summary>
+
+Pins the package to the manager’s release line instead of silently selecting a newer agent.
+
+</details>
+
+<details>
+<summary><code>daemon-reload</code> / <code>enable --now</code></summary>
+
+Refreshes systemd’s unit view, enables boot startup and starts the installed agent.
+
+</details>
+
+<details>
+<summary><code>apt-mark hold</code></summary>
+
+Prevents an unrelated package upgrade from moving this agent beyond the chosen manager version.
+
+</details>
+
+<details>
+<summary><code>systemctl is-active</code></summary>
+
+Returns service state; verify the additional Active inventory state in the dashboard.
+
+</details>
 
 
 <a id="step-09"></a>
@@ -485,14 +770,35 @@ From the **operator workstation**, open `http://192.168.38.131/`. A local `http:
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| `apt-get install apache2 openssh-server` | Adds the web workload and inbound SSH service needed for the controlled authentication test. |
-| `systemctl enable --now apache2 ssh` | Starts both services and enables them at boot. |
-| `systemctl is-active ...` | Checks Apache, SSH and the Wazuh agent together. |
-| Workstation request to `http://192.168.38.131/` | Tests the actual client-to-server HTTP path; localhost tests only the browser’s own machine. |
+<details>
+<summary><code>apt-get install apache2 openssh-server</code></summary>
+
+Adds the web workload and inbound SSH service needed for the controlled authentication test.
+
+</details>
+
+<details>
+<summary><code>systemctl enable --now apache2 ssh</code></summary>
+
+Starts both services and enables them at boot.
+
+</details>
+
+<details>
+<summary><code>systemctl is-active ...</code></summary>
+
+Checks Apache, SSH and the Wazuh agent together.
+
+</details>
+
+<details>
+<summary>Workstation request to <code>http://192.168.38.131/</code></summary>
+
+Tests the actual client-to-server HTTP path; localhost tests only the browser’s own machine.
+
+</details>
 
 
 <a id="step-10"></a>
@@ -516,16 +822,49 @@ On an already installed endpoint, inspect the existing agent and configuration i
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| `Join-Path $env:TEMP ...` / `Invoke-WebRequest` | Chooses a local installer path and downloads the version-matched official MSI. |
-| `Get-AuthenticodeSignature` + `throw` | Stops installation if the Windows publisher signature is not valid. |
-| `Start-Process msiexec.exe -Wait -PassThru` | Runs the installer to completion and captures its exit code instead of racing the service start. |
-| `/i`, `/qn` | Install the MSI without an interactive wizard; manager/name properties are passed explicitly. |
-| Exit code `0` / `3010` | Means success / success with reboot required. Other codes are treated as a failure. |
-| `Start-Service` / `Get-Service WazuhSvc` | Starts and then verifies the correct Windows Wazuh service. |
+<details>
+<summary><code>Join-Path $env:TEMP ...</code> / <code>Invoke-WebRequest</code></summary>
+
+Chooses a local installer path and downloads the version-matched official MSI.
+
+</details>
+
+<details>
+<summary><code>Get-AuthenticodeSignature</code> + <code>throw</code></summary>
+
+Stops installation if the Windows publisher signature is not valid.
+
+</details>
+
+<details>
+<summary><code>Start-Process msiexec.exe -Wait -PassThru</code></summary>
+
+Runs the installer to completion and captures its exit code instead of racing the service start.
+
+</details>
+
+<details>
+<summary><code>/i</code>, <code>/qn</code></summary>
+
+Install the MSI without an interactive wizard; manager/name properties are passed explicitly.
+
+</details>
+
+<details>
+<summary>Exit code <code>0</code> / <code>3010</code></summary>
+
+Means success / success with reboot required. Other codes are treated as a failure.
+
+</details>
+
+<details>
+<summary><code>Start-Service</code> / <code>Get-Service WazuhSvc</code></summary>
+
+Starts and then verifies the correct Windows Wazuh service.
+
+</details>
 
 
 <a id="step-11"></a>
@@ -567,17 +906,56 @@ Confirm the same endpoint/process event in Wazuh. A Running Sysmon service or a 
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| Sysinternals ZIP + `Expand-Archive` | Downloads and unpacks the vendor Sysmon distribution outside the repository. |
-| Sysmon Authenticode check | Verifies the executable’s Windows signature before it is run. |
-| Pinned community configuration URL | Makes the guide’s configuration reference reproducible; it is separate from the changing vendor binary download. |
-| `Sysmon64.exe -accepteula -i` | Installs Sysmon with the reviewed event configuration. An existing installation uses supported update mode instead. |
-| `location` / `log_format=eventchannel` | Instructs Wazuh to read the exact Sysmon Windows event channel; it does not install Sysmon. |
-| `Restart-Service WazuhSvc` | Reloads the agent after its channel configuration is edited. |
-| `Start-Process notepad.exe` / `Get-WinEvent` | Creates a benign process and looks for recent local Sysmon process-creation events. Dashboard delivery is checked separately. |
+<details>
+<summary>Sysinternals ZIP + <code>Expand-Archive</code></summary>
+
+Downloads and unpacks the vendor Sysmon distribution outside the repository.
+
+</details>
+
+<details>
+<summary>Sysmon Authenticode check</summary>
+
+Verifies the executable’s Windows signature before it is run.
+
+</details>
+
+<details>
+<summary>Pinned community configuration URL</summary>
+
+Makes the guide’s configuration reference reproducible; it is separate from the changing vendor binary download.
+
+</details>
+
+<details>
+<summary><code>Sysmon64.exe -accepteula -i</code></summary>
+
+Installs Sysmon with the reviewed event configuration. An existing installation uses supported update mode instead.
+
+</details>
+
+<details>
+<summary><code>location</code> / <code>log_format=eventchannel</code></summary>
+
+Instructs Wazuh to read the exact Sysmon Windows event channel; it does not install Sysmon.
+
+</details>
+
+<details>
+<summary><code>Restart-Service WazuhSvc</code></summary>
+
+Reloads the agent after its channel configuration is edited.
+
+</details>
+
+<details>
+<summary><code>Start-Process notepad.exe</code> / <code>Get-WinEvent</code></summary>
+
+Creates a benign process and looks for recent local Sysmon process-creation events. Dashboard delivery is checked separately.
+
+</details>
 
 
 ![Detection engineering](../../assets/detections.svg)
@@ -707,23 +1085,98 @@ The corrected document directly records Windows failed-logon rule **60122**, lev
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| `group` | Places the definitions in local/Sysmon/custom-detection groups for organization. |
-| `rule id` / `level` | Provides the unique custom identifier and configured alert severity. A high level is a rule setting, not proof of compromise. |
-| `if_sid=61603` | Requires the built-in Wazuh 4.14.7 Sysmon Event 1 process-creation parent to match first. |
-| `field ...commandLine` / `type=pcre2` | Tests the decoded process command line with a PCRE2 regular expression. |
-| `(?i)` / `\.exe` / `\\hostname` | Makes the match case-insensitive; escapes the dot in .exe; requires a Windows path separator before hostname. |
-| `description` / `$(win.system.computer)` | Builds the alert’s readable text and inserts the decoded computer name. |
-| `mitre/id` | Labels the detection with the supplied ATT&CK technique; it does not establish malicious intent. |
-| Duplicate-ID search / `compose cp` | Checks for existing definitions before copying one reviewed file into the manager’s persistent rules directory. |
-| `chown` / `chmod 640` | Sets the manager-readable owner/group and limits file access. |
-| `wazuh-analysisd -t` / `wazuh-logtest` | Validates manager configuration, then tests decoding/rule selection against an actual raw event. |
-| `compose restart wazuh.manager` | Reloads the changed rules. Check logs and agent recovery afterwards. |
-| Windows discovery commands | Generate controlled process events: user identity, network configuration, machine name and a benign encoded whoami. |
-| Dashboard agent/rule filters | Narrow the event view; retain rule IDs, levels, descriptions, timestamps and agent identity before marking a case complete. |
+<details>
+<summary><code>group</code></summary>
+
+Places the definitions in local/Sysmon/custom-detection groups for organization.
+
+</details>
+
+<details>
+<summary><code>rule id</code> / <code>level</code></summary>
+
+Provides the unique custom identifier and configured alert severity. A high level is a rule setting, not proof of compromise.
+
+</details>
+
+<details>
+<summary><code>if_sid=61603</code></summary>
+
+Requires the built-in Wazuh 4.14.7 Sysmon Event 1 process-creation parent to match first.
+
+</details>
+
+<details>
+<summary><code>field ...commandLine</code> / <code>type=pcre2</code></summary>
+
+Tests the decoded process command line with a PCRE2 regular expression.
+
+</details>
+
+<details>
+<summary><code>(?i)</code> / <code>\.exe</code> / <code>\\hostname</code></summary>
+
+Makes the match case-insensitive; escapes the dot in .exe; requires a Windows path separator before hostname.
+
+</details>
+
+<details>
+<summary><code>description</code> / <code>$(win.system.computer)</code></summary>
+
+Builds the alert’s readable text and inserts the decoded computer name.
+
+</details>
+
+<details>
+<summary><code>mitre/id</code></summary>
+
+Labels the detection with the supplied ATT&CK technique; it does not establish malicious intent.
+
+</details>
+
+<details>
+<summary>Duplicate-ID search / <code>compose cp</code></summary>
+
+Checks for existing definitions before copying one reviewed file into the manager’s persistent rules directory.
+
+</details>
+
+<details>
+<summary><code>chown</code> / <code>chmod 640</code></summary>
+
+Sets the manager-readable owner/group and limits file access.
+
+</details>
+
+<details>
+<summary><code>wazuh-analysisd -t</code> / <code>wazuh-logtest</code></summary>
+
+Validates manager configuration, then tests decoding/rule selection against an actual raw event.
+
+</details>
+
+<details>
+<summary><code>compose restart wazuh.manager</code></summary>
+
+Reloads the changed rules. Check logs and agent recovery afterwards.
+
+</details>
+
+<details>
+<summary>Windows discovery commands</summary>
+
+Generate controlled process events: user identity, network configuration, machine name and a benign encoded whoami.
+
+</details>
+
+<details>
+<summary>Dashboard agent/rule filters</summary>
+
+Narrow the event view; retain rule IDs, levels, descriptions, timestamps and agent identity before marking a case complete.
+
+</details>
 
 **Recorded detection output**
 
@@ -755,14 +1208,35 @@ Confirm both agents and the old alert remain. Reboot siem-host using the VM's no
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| `docker stats --no-stream` | Captures one container resource snapshot; use an idle observation period and retain the measurement context. |
-| Stack down/up without `-v` | Exercises container recreation while keeping the persistent data volumes. |
-| Recheck the same old alert after reboot | Shows retained data; a new empty dashboard or only newly arriving events would not prove persistence. |
-| Routine `docker compose stop` | Stops service containers without deleting them. Resume using the existing deployment. |
+<details>
+<summary><code>docker stats --no-stream</code></summary>
+
+Captures one container resource snapshot; use an idle observation period and retain the measurement context.
+
+</details>
+
+<details>
+<summary>Stack down/up without <code>-v</code></summary>
+
+Exercises container recreation while keeping the persistent data volumes.
+
+</details>
+
+<details>
+<summary>Recheck the same old alert after reboot</summary>
+
+Shows retained data; a new empty dashboard or only newly arriving events would not prove persistence.
+
+</details>
+
+<details>
+<summary>Routine <code>docker compose stop</code></summary>
+
+Stops service containers without deleting them. Resume using the existing deployment.
+
+</details>
 
 
 <a id="step-14"></a>
@@ -779,13 +1253,28 @@ Take final snapshots after validation. Record actual results, failures and fixes
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| Final adapter / route checks | Establishes that temporary endpoint NAT and default routes were actually removed. |
-| `slmgr.vbs /xpr` | Displays Windows activation/evaluation expiry state; record the displayed value rather than estimating it. |
-| Final snapshots / journal | Captures the state after validation and records the real commands, failures and corrections. |
+<details>
+<summary>Final adapter / route checks</summary>
+
+Establishes that temporary endpoint NAT and default routes were actually removed.
+
+</details>
+
+<details>
+<summary><code>slmgr.vbs /xpr</code></summary>
+
+Displays Windows activation/evaluation expiry state; record the displayed value rather than estimating it.
+
+</details>
+
+<details>
+<summary>Final snapshots / journal</summary>
+
+Captures the state after validation and records the real commands, failures and corrections.
+
+</details>
 
 
 <a id="step-15"></a>
@@ -796,13 +1285,28 @@ Use the [acceptance matrix](docs/acceptance.md) and [event register](docs/event-
 
 
 
-**What each part does**
+**Explanations — click an arrow to expand**
 
-| Command / setting | Explanation |
-| :--- | :--- |
-| Recorded | A screenshot/output supports the specific stated observation. |
-| Configured | The definition exists, but its own alert ID is not necessarily shown firing. |
-| Open | Required evidence remains absent; the implementation is not represented as fully accepted. |
+<details>
+<summary>Recorded</summary>
+
+A screenshot/output supports the specific stated observation.
+
+</details>
+
+<details>
+<summary>Configured</summary>
+
+The definition exists, but its own alert ID is not necessarily shown firing.
+
+</details>
+
+<details>
+<summary>Open</summary>
+
+Required evidence remains absent; the implementation is not represented as fully accepted.
+
+</details>
 
 ## Source references
 

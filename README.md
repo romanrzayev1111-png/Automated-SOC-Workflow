@@ -39,7 +39,28 @@ sudo docker compose ps
 sudo docker compose logs --tail=100 wazuh.indexer wazuh.manager wazuh.dashboard
 ```
 
-`up -d` starts the services in the background; `ps` inspects their current state; `logs` checks what they did during initialization. [The Day 01 page](days/day-01/README.md) shows the preceding installation and configuration steps, the remaining commands and the evidence that limits each claim.
+<details>
+<summary><code>docker compose up -d</code> — explanation</summary>
+
+Starts the services in the background using the existing deployment configuration.
+
+</details>
+
+<details>
+<summary><code>docker compose ps</code> — explanation</summary>
+
+Lists the deployment's service containers and their current states.
+
+</details>
+
+<details>
+<summary><code>docker compose logs --tail=100 ...</code> — explanation</summary>
+
+Shows recent indexer, manager and dashboard output to inspect initialization or diagnose failures.
+
+</details>
+
+[The Day 01 page](days/day-01/README.md) shows the preceding installation and configuration steps, the remaining commands and their individual expandable explanations.
 
 <details>
 <summary><strong>See the recorded endpoint coverage</strong></summary>
