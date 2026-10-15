@@ -25,6 +25,11 @@ secrets/
 *.vmss
 
 # Local tooling and temporary outputs
+# Reports are delivered separately for Classroom, never added to the project.
+*.pdf
+*.doc
+*.docx
+*.zip
 .venv/
 __pycache__/
 *.pyc

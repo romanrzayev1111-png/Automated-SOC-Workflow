@@ -1,6 +1,6 @@
 # Recorded architecture
 
-[Vector diagram](architecture.svg) · [High-resolution diagram](architecture.png) · [PDF diagram](architecture.pdf)
+[Vector diagram](architecture.svg) · [High-resolution diagram](architecture.png)
 
 ![Day 01 system architecture](architecture.svg)
 
