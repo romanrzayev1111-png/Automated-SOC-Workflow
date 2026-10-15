@@ -50,7 +50,16 @@ for rule in rules.findall('rule'):
     assert not pattern.search(r'C:\Windows\System32\notepad.exe'), f'Rule negative sample: {rule.attrib["id"]}'
 assert ET.parse(DAY / 'config/sysmon-eventchannel.xml').getroot().findtext('location') == 'Microsoft-Windows-Sysmon/Operational'
 
-blocks = re.findall(r'```bash\n(.*?)\n```', (DAY / 'step-by-step.md').read_text(), re.S)
+guide_text = (DAY / 'step-by-step.md').read_text()
+inline_text = (DAY / 'README.md').read_text()
+for language, block in re.findall(r'```([^\n]+)\n(.*?)\n```', guide_text, re.S):
+    assert f'```{language}\n{block}\n```' in inline_text, f'Guide block missing from visible Day 01 page: {language}'
+for filename, language in [('netplan-siem-host.example.yaml', 'yaml'), ('netplan-ubuntu-web.example.yaml', 'yaml'), ('windows-discovery-rules.xml', 'xml')]:
+    source = (DAY / 'config' / filename).read_text().strip()
+    assert f'```{language}\n{source}\n```' in inline_text, f'Inline configuration differs: {filename}'
+for step in range(1, 16):
+    assert f'id="step-{step:02d}"' in inline_text, f'Missing navigation anchor: {step}'
+blocks = re.findall(r'```bash\n(.*?)\n```', inline_text, re.S)
 assert len(blocks) >= 15, 'Missing guide command blocks'
 for n, block in enumerate(blocks, 1):
     result = subprocess.run(['bash', '-n'], input=block, text=True, capture_output=True)
@@ -62,5 +71,5 @@ for path in ROOT.rglob('*'):
         continue
     name = str(path.relative_to(ROOT))
     assert not re.search(r'(^|/)(\.env(?:\..*)?|id_rsa|id_ed25519)$|\.(key|pem|p12|pfx|crt|cer|vmdk|vdi|qcow2|iso)$', name, re.I), f'Sensitive-file pattern: {name}'
-print(f'PASS: 40 source hashes/dimensions; local links; 4 XML rules; 8 regex cases; event-channel XML; {len(blocks)} Bash syntax blocks; sensitive-file patterns.')
+print(f'PASS: 40 source hashes/dimensions; local links; full inline command/config fidelity; 15 chapter anchors; 4 XML rules; 8 regex cases; event-channel XML; {len(blocks)} Bash syntax blocks; sensitive-file patterns.')
 print('Not performed here: live VMware/Wazuh replay, PowerShell execution, comprehensive secret/history scan.')

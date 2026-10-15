@@ -1,6 +1,6 @@
 # Roman Rzayev
 
-I build hands-on cybersecurity projects with Wazuh, Windows and Linux, documenting the architecture, implementation evidence and operational lessons along the way.
+Security monitoring & detection engineering. I build practical SOC workflows with Wazuh, Sysmon and Windows/Linux telemetry, supported by clear documentation and retained evidence.
 
 ## Featured project
 
