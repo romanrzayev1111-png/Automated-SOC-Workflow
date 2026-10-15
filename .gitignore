@@ -1,0 +1,34 @@
+# Credentials and private runtime configuration
+.env
+.env.*
+!.env.example
+*credentials*
+*passwords*
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+id_rsa*
+id_ed25519*
+config/wazuh_indexer_ssl_certs/
+secrets/
+
+# VM disks and snapshots stay outside Git
+*.vmdk
+*.vdi
+*.qcow2
+*.iso
+*.vmem
+*.vmsn
+*.vmss
+
+# Local tooling and temporary outputs
+.venv/
+__pycache__/
+*.pyc
+.cache/
+~$*.docx
+*.tmp
+.DS_Store
