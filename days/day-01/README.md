@@ -4,6 +4,112 @@
 
 # Day 01 · Security Monitoring Foundation
 
+<a id="ntp-time-synchronization"></a>
+## Prerequisite · NTP and timezone synchronization (three-machine lab)
+
+> **Added after the original Day 01 deployment, before the Day 02 tests.** All three machines now use Azerbaijan/Baku local time; `siem-host` is the internal NTP source for both endpoints. Timezone alone changes display, not clock accuracy.
+
+| Host | Timezone | Time source |
+| :--- | :--- | :--- |
+| `siem-host` · `192.168.38.132` | `Asia/Baku` | Chrony upstream NTP pools, serving `192.168.38.0/24` |
+| `ubuntu-web` · `192.168.38.131` | `Asia/Baku` | Chrony client → `192.168.38.132` |
+| `win-client` · `192.168.38.133` | `Azerbaijan Standard Time` | W32Time → `192.168.38.132` |
+
+### 0.1 Set consistent timezone
+
+**siem-host and ubuntu-web** (run separately on each):
+
+```bash
+sudo timedatectl set-timezone Asia/Baku
+timedatectl status
+```
+
+<details><summary>Explanation</summary>
+
+`set-timezone` changes local display to UTC+04:00 and persists across reboot. `timedatectl status` verifies timezone and system-clock state. This command does **not** configure an upstream NTP source.
+
+</details>
+
+**win-client** (elevated PowerShell):
+
+```powershell
+Set-TimeZone -Id "Azerbaijan Standard Time"
+Get-TimeZone
+Get-Date
+```
+
+<details><summary>Explanation</summary>
+
+`Set-TimeZone` selects the Windows timezone, `Get-TimeZone` verifies it and `Get-Date` shows the current locally displayed time.
+
+</details>
+
+### 0.2 siem-host — install and serve Chrony
+
+```bash
+sudo apt install -y chrony
+sudo grep -qFx 'allow 192.168.38.0/24' /etc/chrony/chrony.conf || echo 'allow 192.168.38.0/24' | sudo tee -a /etc/chrony/chrony.conf
+sudo systemctl enable --now chrony
+sudo systemctl restart chrony
+chronyc tracking
+chronyc sources -n
+sudo ss -lunp | grep ':123'
+```
+
+<details><summary>Command-by-command explanation</summary>
+
+- `apt install` adds Chrony; on some Ubuntu configurations it replaces the default time synchronizer.
+- `grep -qFx ... || tee -a` adds the lab-only `allow` ACL once.
+- `enable --now` starts the service and configures boot startup.
+- `restart` applies the updated ACL.
+- `tracking` confirms a usable upstream source, nonzero stratum and `Leap status: Normal`.
+- `sources -n` identifies selectable NTP servers; `^*` denotes the selected source.
+- `ss -lunp` shows that Chrony listens on UDP/123. If a host firewall is enabled, permit UDP/123 from the lab subnet only.
+
+</details>
+
+**Observed troubleshooting:** immediately after a restart, `Stratum: 0` / `Not synchronised` appeared. Shortly afterward, upstream polls completed and the server reported `Stratum: 3` / `Normal`. Do not mistake that startup transient for the final outcome.
+
+### 0.3 ubuntu-web — client of siem-host
+
+```bash
+sudo cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.bak
+echo 'server 192.168.38.132 iburst prefer' | sudo tee -a /etc/chrony/chrony.conf
+sudo systemctl restart chrony
+chronyc sources -n
+chronyc tracking
+```
+
+<details><summary>Command-by-command explanation</summary>
+
+`cp` preserves rollback. `server` selects the internal monitoring server, `iburst` accelerates initial measurements and `prefer` favors it over other usable sources. After restart, the captured `^* 192.168.38.132` and `Leap status: Normal` confirm real selection. For a fully isolated endpoint, comment out remaining upstream `pool` entries only after internal NTP works.
+
+</details>
+
+### 0.4 win-client — Windows Time Service
+
+```powershell
+w32tm /config /manualpeerlist:"192.168.38.132,0x8" /syncfromflags:manual /update
+Set-Service W32Time -StartupType Automatic
+Restart-Service W32Time
+w32tm /resync /rediscover
+w32tm /query /source
+w32tm /query /status
+```
+
+<details><summary>Command-by-command explanation</summary>
+
+The `manualpeerlist` points Windows at the internal NTP server; `0x8` uses client mode. `syncfromflags:manual` selects that peer; `update` applies configuration. `Set-Service` enables the Windows time service at boot; `Restart-Service` restarts it. `resync` requests a fresh update. `query` verifies the effective source and last successful synchronization. The screenshot records source `192.168.38.132,0x8`, stratum 4 and no leap warning.
+
+</details>
+
+**Operational caution:** both Linux VMs reported unusually large Chrony frequency correction (about 12,755 ppm). Investigate VMware guest-host time sync and sustained drift before making precision guarantees. A boot-enabled daemon still requires a reboot test for persistence.
+
+**Evidence source:** `WEEK2(1).docx` pp. 1–4. See [Day 02](../day-02/README.md) for detection and monitoring outcomes.
+
+---
+
+
 Day 01 covers the VMware network, Wazuh installation, two endpoint agents and the first detection rules. Commands and configuration are shown below; expand an arrow when you need an explanation.
 
 ![Recorded project metrics](../../assets/day-01-metrics.svg)
