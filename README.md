@@ -14,9 +14,10 @@ I’m documenting my SOC setup here: the network, Wazuh deployment, endpoint tel
 
 | Day | Build focus | Read it here | Evidence status |
 | :--- | :--- | :--- | :--- |
-| **01** | Monitoring foundation · Wazuh · Sysmon · Windows/Linux | **[Commands, full configurations & explanations](days/day-01/README.md)** | Platform and selected alerts recorded; acceptance checks tracked |
+| **01** | Monitoring foundation · Wazuh · Sysmon · Windows/Linux; **NTP prerequisite added at the top** | **[Day 01 walkthrough](days/day-01/README.md)** | Platform and selected alerts recorded; acceptance checks tracked |
+| **02** | LabShop rules · FIM · Registry · SCA · Vulnerability inventory · Suricata IDS | **[Day 02 full commands & explanations](days/day-02/README.md)** | Detection and integration recorded; remaining checks documented |
 
-New work will be added under the next day’s folder.
+Day 02 now continues the project with LabShop detection engineering, Linux/Windows FIM, SCA remediation, vulnerability triage, and Suricata-to-Wazuh integration.
 
 ## Day 01 · Wazuh setup
 
