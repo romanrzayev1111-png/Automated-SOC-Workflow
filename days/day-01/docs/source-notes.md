@@ -7,7 +7,7 @@
 - `Week1_SOC_Lab (1).docx`: acceptance baseline; instructions define intended work, not completed work.
 - Supplied conversation excerpt: supplementary context. Claims are checked against screenshots and final code rather than accepted as test outcomes.
 
-There are **40 unique screenshots**. E01–E37 map to image1–image37 in windows.docx. E38–E40 map to image27–image29 in the earlier document. `evidence/manifest.json` preserves the source document/member, original dimensions and SHA-256 for each asset. Source documents and the raw conversation are not committed.
+The original deployment set contains **40 unique screenshots**. E01–E37 map to image1–image37 in windows.docx. E38–E40 map to image27–image29 in the earlier document. `evidence/manifest.json` preserves the source document/member, original dimensions and SHA-256 for each asset. Source documents and the raw conversation are not committed.
 
 ## Configuration provenance
 
@@ -28,3 +28,12 @@ The guide's Compose names, images, certificate generator and ports were checked 
 This repository is Roman Rzayev's personal implementation record, organized by day. The professional company-branded report and its generation assets are delivered separately, outside the current GitHub walkthrough tree. No corporate identity is applied to the personal profile or project documentation.
 
 Original screenshots remain lossless PNGs. The separately delivered report fits them proportionally in equal-size frames; no screenshot text is reconstructed or artificially sharpened. Missing source detail cannot be recovered by upscaling.
+
+
+## NTP material added during Week 2
+
+The supplied Week 2 execution handoff and eleven original PNGs from the 25-page `WEEK2.docx` add [time synchronization](time-synchronization.md). They are stored separately in `evidence/ntp/` with their own manifest, so the original 40-image deployment manifest remains unchanged. Day 01 now references 51 source captures.
+
+NTP is placed first for future test preparation; the captures were added on 3 November, after some October application tests. A matching timezone is not a clock-source or precision guarantee. Internal-source selection is recorded; sustained drift, final removal of external peers/NAT and post-reboot operation remain open.
+
+The handoff also reports moving active Sysmon IDs to 100200–100203 for coexistence with LabShop. Original Day 01 XML and screenshot IDs remain historical source material, not an instruction to install duplicate runtime rules.

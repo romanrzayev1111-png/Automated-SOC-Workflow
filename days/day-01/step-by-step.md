@@ -292,6 +292,8 @@ Confirm the same endpoint/process event in Wazuh. A Running Sysmon service or a 
 
 ## 12. Custom rules and test events
 
+> **Continuing into Day 02:** the XML below preserves the original Day 01 IDs 100100–100103. The Week 2 handoff reports moving their active Sysmon definitions in local_rules.xml to 100200–100203 before loading LabShop rules 100100/100101. Do not reload the historical IDs into a manager already running LabShop. See the [migration note](../day-02/README.md#step-02).
+
 ### 12.1 All four captured rules
 
 The complete [windows-discovery-rules.xml](config/windows-discovery-rules.xml) is transcribed from E35. The common parent **61603** is the Wazuh 4.14.7 Sysmon Event ID 1 process-creation rule; this was checked against the upstream ruleset rather than guessed.

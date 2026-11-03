@@ -8,7 +8,7 @@ This matrix maps the supplied Week 1 brief to the implementation evidence. Requi
 | :--- | :--- | :--- |
 | L1 | Partial | E01–E03 show all three VMs; endpoint RAM, CPUs and disk sizes differ from the baseline. Resolve/document approved resource changes. |
 | L2 | Partial | E04–E07 show the host-only subnet and server NAT. DHCP/dynamic flags contradict a claim of demonstrated static addressing. Retain persistent address configuration and final endpoint adapters. |
-| L3 | Partial | E08–E10 show all directed peer pings; E19–E20 show a dashboard browser. Record workstation origin and clock synchronization on all systems. |
+| L3 | Partial | E08–E10 show all directed peer pings; E19–E20 show a dashboard browser. Workstation browser origin still needs proof. NTP-001–011 now record timezones/source selection; sustained clock stability and post-reboot synchronization remain open. |
 | L4 | Open | Compose commands run, but official-repository Docker installation, plugin versions and persistent vm.max_map_count are not recorded. |
 | L5 | Open | Retain each VM's snapshot inventory showing w1-clean-install and w1-done. |
 | W1 | Recorded | E15 and E18 show v4.14.7 source/images and three Up containers. README records the exact version. This is a startup observation. |
@@ -26,7 +26,7 @@ This matrix maps the supplied Week 1 brief to the implementation evidence. Requi
 | S2 | Partial | VMnet1 is host-only and server NAT is visible. Source notes mention temporary endpoint NAT; final routes and adapter removal are unverified. |
 | D1 | Recorded (this delivery) | README, architecture/, evidence/ and journal.md are present. Publication status is reported separately. |
 | D2 | Partial | Start/stop order and readiness procedure are documented in README and docs/operations.md. Replay against the original VMs remains outstanding. |
-| D3 | Partial | The journal contains six evidence-based retrospective entries. It does not invent five contemporaneous troubleshooting attempts or undocumented fixes. Add genuine dated operational entries. |
+| D3 | Partial | The journal contains evidence-based retrospective entries. It does not invent five contemporaneous troubleshooting attempts or undocumented fixes. Add genuine dated operational entries. |
 
 ## Suggested completion order
 

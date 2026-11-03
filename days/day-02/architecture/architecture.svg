@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+<title>Day 02: the recorded three-host monitoring topology</title>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 8 4 0 8" fill="#B28A3E"/></marker></defs>
+<rect width="1280" height="640" rx="14" fill="#F4F3EF"/>
+<g font-family="sans-serif" fill="#141A23">
+<text x="35" y="49" font-size="24" font-weight="bold">DAY 02 / RECORDED TOPOLOGY</text>
+<rect x="420" y="90" width="440" height="140" rx="10" fill="#141A23"/>
+<g fill="#F8FAFC"><text x="445" y="126" font-size="24" font-weight="bold">siem-host · 192.168.38.132</text><text x="445" y="162" font-size="19">Wazuh 4.14.7 · Chrony NTP server</text><text x="445" y="196" font-size="17">Host-only network + upstream access via NAT</text></g>
+<g stroke="#B28A3E" stroke-width="2" fill="none"><path d="M530 230V290H275V350"/><path d="M750 230V290H1005V350"/></g>
+<text x="35" y="277" font-size="17">Agent events ↑ · NTP from .132 ↓</text><text x="882" y="277" font-size="17">Agent events ↑ · NTP from .132 ↓</text>
+<rect x="35" y="350" width="510" height="205" rx="10" fill="white" stroke="#DDD8CD"/>
+<text x="58" y="388" font-size="25" font-weight="bold">ubuntu-web · 192.168.38.131</text>
+<text x="58" y="425" font-size="19">LabShop · Apache · Linux Wazuh agent</text>
+<text x="58" y="460" font-size="19">Suricata 6.0.4 · AF_PACKET ens33</text>
+<text x="58" y="495" font-size="18">eve.json → agent → manager → dashboard</text>
+<text x="58" y="529" font-size="16" fill="#626A75">ens36 temporary NAT is still present in the capture</text>
+<rect x="735" y="350" width="510" height="205" rx="10" fill="white" stroke="#DDD8CD"/>
+<text x="758" y="388" font-size="25" font-weight="bold">win-client · 192.168.38.133</text>
+<text x="758" y="425" font-size="19">Windows Wazuh agent · Sysmon</text>
+<text x="758" y="460" font-size="19">File / Registry monitoring · local SCA</text>
+<text x="758" y="495" font-size="18">curl.exe sends the /admin probe</text>
+<text x="758" y="529" font-size="16" fill="#626A75">Windows Time uses .132,0x8</text>
+<path d="M735 449H550" stroke="#B28A3E" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+<text x="568" y="421" font-size="15">HTTP GET /admin</text>
+<text x="35" y="600" font-size="18">VMnet1 / 192.168.38.0/24 · Addresses are recorded; final NAT removal and persistence need evidence.</text>
+</g></svg>

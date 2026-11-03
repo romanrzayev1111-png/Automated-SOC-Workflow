@@ -1,0 +1,9 @@
+# Observed portions of /etc/suricata/suricata.yaml (images70,71).
+# Merge into existing vars / af-packet sections; keep the rest of the file.
+vars:
+  address-groups:
+    HOME_NET: "[192.168.38.0/24]"
+af-packet:
+  - interface: ens33
+    cluster-id: 99
+    cluster-type: cluster_flow

@@ -1,0 +1,11 @@
+<!-- Final definitions transcribed from WEEK2.docx image14.
+     Wazuh decoder files allow multiple top-level decoder elements. -->
+<decoder name="labshop">
+  <program_name>^labshop$</program_name>
+</decoder>
+
+<decoder name="labshop-login">
+  <parent>labshop</parent>
+  <regex>^(\w+) user=(\S+) src=(\S+)</regex>
+  <order>action,dstuser,srcip</order>
+</decoder>

@@ -1,5 +1,7 @@
 # Evidence register
 
+The original deployment set below contains 40 captures. Eleven later clock-setup captures are in the [NTP evidence register](ntp/README.md), linked at the beginning of the Day 01 walkthrough.
+
 Original PNG files extracted losslessly from windows.docx (E01-E37) and three supplementary hostname captures from faridexiyetimbrat.docx (E38-E40). Captions state what each image establishes; omissions are tracked in the acceptance matrix.
 
 | Figure | Evidence | Observation |

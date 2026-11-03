@@ -9,8 +9,9 @@ DAY = ROOT / 'days/day-01'
 ASSETS = ROOT / 'assets'
 
 
-def hero(filename, eyebrow, title, subtitle, day=False):
+def hero(filename, eyebrow, title, subtitle, day=False, day_label='DAY 01'):
     side = '''<g transform="translate(1120 96)"><rect width="305" height="232" rx="14" fill="#1B222C" stroke="#38404B"/><text x="24" y="39" fill="#E8BD62" font-size="15" font-weight="bold" letter-spacing="3">DAY 01</text><path d="M53 99H250M150 99V175" stroke="#E8BD62" stroke-width="2"/><g fill="#11161E" stroke="#59616B"><rect x="25" y="73" width="78" height="52" rx="7"/><rect x="199" y="73" width="78" height="52" rx="7"/><rect x="111" y="154" width="78" height="52" rx="7"/></g><g fill="white" font-size="12" text-anchor="middle"><text x="64" y="104">LINUX</text><text x="238" y="104">WINDOWS</text><text x="150" y="185">WAZUH</text></g></g>'''
+    side = side.replace('DAY 01', escape(day_label))
     ASSETS.mkdir(exist_ok=True)
     (ASSETS / filename).write_text(f'''<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="430" viewBox="0 0 1600 430"><title>{escape(title)}</title><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop stop-color="#0B1018"/><stop offset="1" stop-color="#202732"/></linearGradient><pattern id="grid" width="38" height="38" patternUnits="userSpaceOnUse"><path d="M38 0H0V38" fill="none" stroke="#ffffff" stroke-opacity=".035"/></pattern></defs><rect width="1600" height="430" rx="16" fill="url(#bg)"/><rect width="1600" height="430" rx="16" fill="url(#grid)"/><path d="M0 55H350L374 79H1510L1550 119V430M38 0V315L80 357H1600" fill="none" stroke="#E8BD62" stroke-width="2"/><g font-family="sans-serif"><text x="88" y="135" fill="#E8BD62" font-size="19" letter-spacing="4" font-weight="bold">{escape(eyebrow)}</text><text x="84" y="220" fill="#F8FAFC" font-size="{48 if day else 49}" font-weight="bold">{escape(title)}</text><text x="88" y="272" fill="#BAC2CC" font-size="22">{escape(subtitle)}</text><text x="88" y="380" fill="#CDD2D9" font-size="16" letter-spacing="2">ROMAN RZAYEV  /  SECURITY ENGINEERING JOURNAL</text>{side}</g></svg>''')
 
@@ -19,13 +20,13 @@ def section_image(filename, number, title, sub):
     (ASSETS / filename).write_text(f'''<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="128" viewBox="0 0 1440 128"><title>{escape(title)}</title><rect width="1440" height="128" rx="10" fill="#141A23"/><rect width="6" height="128" rx="3" fill="#E8BD62"/><g font-family="sans-serif"><text x="35" y="80" fill="#E8BD62" font-size="47" font-weight="bold">{number}</text><text x="133" y="58" fill="#F8FAFC" font-size="26" font-weight="bold">{escape(title)}</text><text x="134" y="92" fill="#AEB8C6" font-size="17">{escape(sub)}</text></g><path d="M1180 32H1360V96H1270" stroke="#E8BD62" stroke-opacity=".4" fill="none"/><circle cx="1270" cy="96" r="4" fill="#E8BD62"/></svg>''')
 
 
-def scorecard():
-    cells = [('03', 'SYSTEMS', 'One platform, two endpoints'), ('02', 'ACTIVE AGENTS', 'Recorded dashboard inventory'), ('04', 'CUSTOM RULES', 'Three matching IDs observed'), ('40', 'SOURCE CAPTURES', 'Original pixels retained')]
+def scorecard(filename='day-01-metrics.svg', cells=None, title='Day 01 recorded implementation metrics'):
+    cells = cells or [('03', 'SYSTEMS', 'One platform, two endpoints'), ('02', 'ACTIVE AGENTS', 'Recorded dashboard inventory'), ('04', 'CUSTOM RULES', 'Three matching IDs observed'), ('51', 'SOURCE CAPTURES', '40 deployment + 11 NTP')]
     cards = []
-    for n, (count, title, sub) in enumerate(cells):
+    for n, (count, cell_title, sub) in enumerate(cells):
         x = n * 365
-        cards.append(f'<g transform="translate({x} 0)"><rect x="1" y="1" width="344" height="159" rx="10" fill="#F4F3EF" stroke="#DDD8CD"/><text x="22" y="65" font-size="42" font-weight="bold" fill="#141A23">{count}</text><text x="23" y="103" font-size="14" letter-spacing="1.2" fill="#8B671F" font-weight="bold">{title}</text><text x="23" y="133" font-size="12" fill="#535D6B">{sub}</text></g>')
-    (ASSETS / 'day-01-metrics.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="162" viewBox="0 0 1440 162"><title>Day 01 recorded implementation metrics</title><g font-family="sans-serif">' + ''.join(cards) + '</g></svg>')
+        cards.append(f'<g transform="translate({x} 0)"><rect x="1" y="1" width="344" height="159" rx="10" fill="#F4F3EF" stroke="#DDD8CD"/><text x="22" y="65" font-size="42" font-weight="bold" fill="#141A23">{count}</text><text x="23" y="103" font-size="14" letter-spacing="1.2" fill="#8B671F" font-weight="bold">{cell_title}</text><text x="23" y="133" font-size="12" fill="#535D6B">{sub}</text></g>')
+    (ASSETS / filename).write_text('<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="162" viewBox="0 0 1440 162"><title>' + escape(title) + '</title><g font-family="sans-serif">' + ''.join(cards) + '</g></svg>')
 
 
 def explanation(rows, label='Command / setting'):
@@ -182,6 +183,15 @@ The manager evaluates the event; Filebeat forwards the resulting alert to the in
 
 Prepared by Roman Rzayev.
 '''
+    ntp_source = DAY / 'docs/time-synchronization.md'
+    ntp = ntp_source.read_text()
+    ntp = re.sub(r'^# NTP and timezone synchronization$', '## 0. NTP and timezone synchronization', ntp, flags=re.M)
+    ntp = re.sub(r'^## (0\.\d+ .+)$', r'### \1', ntp, flags=re.M)
+    # Source lives one directory below the landing page. Relocate only links.
+    ntp = re.sub(r'(\]\(|src=")\.\./', r'\1', ntp)
+    marker = '# Day 01 · Security Monitoring Foundation\n'
+    intro = intro.replace(marker, marker + '\n' + ntp + '\n---\n')
+    intro = intro.replace('| [01 · Network](#step-01)', '| [00 · NTP](#ntp-time-synchronization) · [01 · Network](#step-01)')
     (DAY / 'README.md').write_text(intro + '\n'.join(rendered) + footer)
 
 
@@ -194,15 +204,16 @@ I’m documenting my SOC setup here: the network, Wazuh deployment, endpoint tel
 
 **Roman Rzayev**
 
-<p align="center"><a href="days/day-01#step-01"><strong>Open Day 01 walkthrough →</strong></a> &nbsp; · &nbsp; <a href="days/day-01#step-12">Read the custom rules</a> &nbsp; · &nbsp; <a href="days/day-01/evidence">Inspect the evidence</a></p>
+<p align="center"><a href="days/day-01#ntp-time-synchronization"><strong>Day 01 · NTP and setup</strong></a> &nbsp; · &nbsp; <a href="days/day-02"><strong>Day 02 · Monitoring</strong></a> &nbsp; · &nbsp; <a href="days/day-02/evidence">Original evidence</a></p>
 
-![Recorded Day 01 metrics](assets/day-01-metrics.svg)
+![Project documentation](assets/project-metrics.svg)
 
 ## Daily notes
 
 | Day | Build focus | Read it here | Evidence status |
 | :--- | :--- | :--- | :--- |
 | **01** | Monitoring foundation · Wazuh · Sysmon · Windows/Linux | **[Commands, full configurations & explanations](days/day-01/README.md)** | Platform and selected alerts recorded; acceptance checks tracked |
+| **02** | LabShop · FIM · SCA · vulnerability inventory · Suricata | **[Implementation, commands & original screenshots](days/day-02/README.md)** | Positive detections and hardening captured; negative-case and operational gaps retained |
 
 New work will be added under the next day’s folder.
 
@@ -259,6 +270,15 @@ The captured inventory lists win-client and ubuntu-web Active on 4.14.7. Full ac
 
 </details>
 
+## Day 02 · Monitoring and detections
+
+| Source | Recorded result | Review |
+| :--- | :--- | :--- |
+| LabShop application log | Failed-login 100100/5 and correlation 100101/10 | [Six test cases, including the unresolved negative](days/day-02/README.md#step-03) |
+| Files / Registry | Linux and Windows file events; Windows Registry modification | [FIM configuration and originals](days/day-02/README.md#step-04) |
+| SCA | Ubuntu passing checks 92→94; Windows 117→118 | [Actual changes and before/after views](days/day-02/README.md#step-09) |
+| Suricata EVE JSON | Custom SID 1000001 reaches built-in Wazuh 86601/3 | [Expanded eve.json-origin proof](days/day-02/README.md#step-16) |
+
 ## Reference notes
 
 - **[Complete Day 01 walkthrough](days/day-01/README.md):** commands, configuration and expandable explanations.
@@ -266,11 +286,14 @@ The captured inventory lists win-client and ubuntu-web Active on 4.14.7. Full ac
 - **[Evidence register](days/day-01/evidence/README.md):** forty original captures and a source/hash manifest.
 - **[Implementation journal](days/day-01/journal.md):** failures, corrections and open actions.
 - **[Acceptance matrix](days/day-01/docs/acceptance.md):** the deployment’s remaining validation work.
+- **[NTP setup and originals](days/day-01/README.md#ntp-time-synchronization):** three-host clock configuration, troubleshooting and source evidence.
+- **[Day 02 results and gaps](days/day-02/docs/acceptance.md):** application tests, FIM, SCA, vulnerability inventory and Suricata EVE delivery.
 
 ## Documentation checks
 
 ```bash
 python3 scripts/build_readmes.py
+python3 scripts/build_day02.py
 python3 scripts/verify_artifacts.py
 ```
 
@@ -281,7 +304,7 @@ Checks screenshot hashes, links, inline configuration, rule expressions and Bash
 
 
 if __name__ == '__main__':
-    hero('project-hero.svg', 'ROMAN RZAYEV / PROJECT NOTES', 'Automated SOC Workflow', 'Wazuh deployment, Windows/Linux agents and Sysmon detection rules.')
+    hero('project-hero.svg', 'ROMAN RZAYEV / PROJECT NOTES', 'Automated SOC Workflow', 'Wazuh deployment, endpoint monitoring and detection rules.', day_label='DAYS 01–02')
     hero('day-01-hero.svg', 'DAY 01 / SETUP NOTES', 'Security Monitoring Foundation', 'VMware network, Wazuh 4.14.7, endpoint agents and custom rules.', True)
     scorecard()
     for filename, number, title, subtitle in [
@@ -293,4 +316,5 @@ if __name__ == '__main__':
         section_image(filename, number, title, subtitle)
     make_day()
     make_root()
+    scorecard('project-metrics.svg', [('02', 'DOCUMENTED DAYS', 'Deployment and monitoring'), ('123', 'ORIGINAL CAPTURES', '40 earlier + 83 Week 2'), ('06', 'LABSHOP TEST CASES', 'Outcomes reviewed separately'), ('02', 'SCA POLICIES', 'Ubuntu and Windows')], 'Project documentation coverage')
     print('Built personal project and Day 01 pages with commands/configurations inline.')

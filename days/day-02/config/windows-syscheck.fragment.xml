@@ -1,0 +1,3 @@
+<!-- Captured entries inside Windows syscheck (image37). -->
+<directories check_all="yes" realtime="yes" report_changes="yes">C:\LabShopData</directories>
+<windows_registry arch="both" report_changes="yes">HKEY_LOCAL_MACHINE\SOFTWARE\LabShop</windows_registry>

@@ -1,0 +1,5 @@
+<!-- Merge into the existing ossec_config on ubuntu-web (image79). -->
+<localfile>
+  <log_format>json</log_format>
+  <location>/var/log/suricata/eve.json</location>
+</localfile>

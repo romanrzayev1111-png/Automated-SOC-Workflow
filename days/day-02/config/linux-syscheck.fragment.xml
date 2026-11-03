@@ -1,0 +1,11 @@
+<!-- Captured portion of the EXISTING syscheck block (images29,46).
+     Merge relevant settings; retain the existing ignore/nodiff/other options.
+     Do not append a second conflicting syscheck block. -->
+<syscheck>
+  <disabled>no</disabled>
+  <frequency>43200</frequency>
+  <scan_on_start>yes</scan_on_start>
+  <directories>/etc,/usr/bin,/usr/sbin</directories>
+  <directories>/bin,/sbin,/boot</directories>
+  <directories check_all="yes" realtime="yes" report_changes="yes">/var/www/html</directories>
+</syscheck>

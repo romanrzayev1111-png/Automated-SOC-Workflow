@@ -1,0 +1,18 @@
+<!-- Transcribed from WEEK2.docx image16. IDs overlap the historical Day 01
+     Sysmon example. Inspect active manager rules before loading this file. -->
+<group name="labshop,">
+  <rule id="100100" level="5">
+    <decoded_as>labshop</decoded_as>
+    <action>LOGIN_FAILED</action>
+    <user negate="yes">^monitor$</user>
+    <description>LabShop: failed login to the shop application.</description>
+    <mitre><id>T1110</id></mitre>
+  </rule>
+
+  <rule id="100101" level="10" frequency="5" timeframe="60">
+    <if_matched_sid>100100</if_matched_sid>
+    <same_srcip />
+    <description>LabShop: brute force, 5 failed logins from the same IP within 60 seconds.</description>
+    <mitre><id>T1110</id></mitre>
+  </rule>
+</group>

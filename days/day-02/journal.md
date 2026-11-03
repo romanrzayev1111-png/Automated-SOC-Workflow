@@ -1,30 +1,61 @@
-# Day 02 · Implementation journal
+# Day 02 implementation journal
 
-Retrospective notes from the screenshots supplied in `WEEK2(1).docx`; not a live execution transcript.
+Retrospective from original PNGs and the supplied execution handoff. Captures span October tests and 3 November NTP/Suricata work. Section order is the replay sequence, not an invented contemporaneous timeline. No VM was remotely operated during documentation.
 
-## 01 — NTP / clock alignment
-Initially all three VMs were configured for Baku time. A standalone timezone change alone did not guarantee NTP synchronization. `siem-host` Chrony initially reported `Stratum 0` and `Not synchronised` immediately after restart. After polling upstream pools, it reported `Stratum 3` and `Leap status: Normal`. Linux and Windows clients subsequently selected `192.168.38.132`. Persistent frequency corrections near 12755 ppm remain a virtualization timing investigation.
+## 01 · Timezone and clock sources
 
-## 02 — LabShop parser and rules
-An early expression used a generic `<field name="action">` for the static `action` field; corrected to `<action>LOGIN_FAILED</action>`. Overlapping Day 01 custom IDs were moved to `100200–100203`. Wazuh accepted the decoder and alerts were recorded at levels 5 and 10.
+The handoff reports an initially synchronized server using America/New_York, followed by Baku timezone configuration. Captures show Asia/Baku and Azerbaijan Standard Time. Chrony initially showed stratum 0 / Not synchronised after restart despite UDP/123 listening; another capture shows stratum 3 / Normal. Recovery after upstream polling, without another manual fix, is reported by the handoff.
 
-## 03 — False positive and correlation tests
-The monitoring account `monitor`, successful login events and malformed data were tested for inappropriate custom alerts. Multiple failure sources were also exercised to assess `same_srcip` handling. Treat the six tests as separate windows when rerunning.
+The Linux client selected .132 and Windows reports .132,0x8 / stratum 4. External Linux sources remain listed. Large frequency correction and Windows dispersion remain open. Full commands and eleven originals are at the beginning of [Day 01](../day-01/README.md#ntp-time-synchronization).
 
-## 04 — FIM coverage
-Realtime create/modify/delete was recorded for Linux `/var/www/html` and Windows `C:\LabShopData`. Windows Registry modification detection was recorded at `HKLM\SOFTWARE\LabShop`. For `/etc`, a temporary 60-second scheduled scan demonstrated scan-based detection. Final restoration to 43200 seconds is not independently captured.
+## 02 · LabShop decoder / static-field correction
 
-## 05 — SCA remediation
-Ubuntu cron file/directory permissions were tightened, changing baseline checks from 92 to 94 passing. On Windows, local password history was changed from 0 to 24, changing 117 to 118 passing. Findings outside those changes remained open.
+The handoff records an initial field-name action error. The final captured rule uses `<action>LOGIN_FAILED</action>` and exact monitor exclusion. The decoder extracts action/dstuser/srcip using `\w+`; logtest confirms those fields. No missing initial error output is recreated.
 
-## 06 — Vulnerability triage
-Wazuh Dashboard recorded 103 critical Ubuntu and 71 critical Windows vulnerability findings. The captures do not prove that those findings were patched or disappeared; version-to-advisory and update availability must be verified before remediation claims.
+## 03 · Duplicate custom IDs
 
-## 07 — Suricata startup and capture
-Initial service failed when configured for nonexistent `eth0`. Updating AF_PACKET to `ens33` enabled capture. The one-rule file loaded; `suricata -T` succeeded. `tcpdump` observed Windows-origin `GET /admin`.
+Historical Day 01 Sysmon definitions use 100100–100103. The handoff reports relocating active definitions in local_rules.xml to 100200–100203 so LabShop can use 100100/100101. Original screenshots remain unchanged; a post-migration rule listing is not supplied. Inspect IDs before combined replay.
 
-## 08 — Suricata alert and SIEM delivery
-`fast.log` recorded SID 1000001. Wazuh Agent collected `/var/log/suricata/eve.json`. Wazuh Dashboard displayed `LabShop Admin Page Probe` under built-in rule 86601, level 3, with matching source IP, destination IP and URI. An Apache access-log alert is *not* an acceptable substitute for the Suricata EVE-origin alert.
+## 04 · Positive and negative test review
 
-## 09 — Outstanding closure
-Retain verified post-reboot service state, eventual NAT removal, `/etc` FIM interval restoration, exact realtime-vs-scheduled latency notes and three vulnerability/SCA rationales before declaring every Week 2 acceptance item closed.
+Single failures produce 100100/5, bulk same-source failures produce 100101/10. The monitor test ends at generic 1002/2: custom exclusion is supported, but no-rule-at-all is inaccurate.
+
+The split-source crop includes 100101 without expanded source/history; that case stays unresolved. LOGIN_OK is visible in raw logs, while malformed input shows pre-decoding only. The handoff reports negative outcomes, but complete captured verdicts are missing. See the [six-case review](docs/test-matrix.md).
+
+## 05 · Files and Registry
+
+Linux realtime and Windows file create/modify/delete have 554/550/553 results. Linux detail explicitly shows realtime mode/path. Windows Environment modification is paired with value/key alerts. The exact shortened Windows interval is absent; Registry monitoring is not described as realtime.
+
+## 06 · Scheduled FIM
+
+Original Linux frequency is 43200 seconds; a later agent log records 60 seconds. /etc writes and dashboard rows follow. The timestamps are not a controlled latency study. Returning to 43200 is advised, not verified as complete.
+
+## 07 · SCA hardening
+
+The Ubuntu script records original modes, then changes crontab 644→600 and cron.hourly 755→700 with root ownership. Two checks pass and the summary moves 92→94 passed. Backups preserve modes only and are overwritten by a second run.
+
+Windows exports PasswordHistorySize=0, applies 24 via an INF/secedit procedure and exports/verifies 24. Check 15500 passes; the summary moves 117→118 passed. No unrelated SCA or CVE remediation is claimed.
+
+## 08 · Vulnerability review
+
+Critical-filtered inventories show 103 Ubuntu and 71 Windows entries with package/build details. The handoff supplies kernel inspection context. No patch/reboot/rescan chain is provided; remediation and official-advisory mapping remain separate work.
+
+## 09 · Suricata DNS / interface recovery
+
+The handoff supplies temporary ens36 resolvectl repair and the exact nonexistent-eth0 error. The DOCX shows corrected ens33/HOME_NET, a running service and version 6.0.4, not the failed-service transcript. ens36 NAT is still present.
+
+## 10 · Signature loading / packet path
+
+The HTTP /admin rule uses SID 1000001 and passes config testing. The handoff reports one rule loaded, zero failures, ens33 MTU 1500 and AFP threads running; old no-rules lines predated the fix.
+
+Windows curl enters ens33 and gets 404. tcpdump and an HTTP EVE record show the flow; fast.log records the signature. A local self-request is not used as the decisive NIC test.
+
+## 11 · EVE delivery to Wazuh
+
+After JSON collection/reload, a fresh request reaches Wazuh with eve.json location, event_type alert, SID 1000001, .133→.131 and built-in 86601/3. The user decided against Wazuh 100110. The updated source contains the correct EVE alert; the earlier Apache-only alert is not substituted.
+
+The earlier local HTTP and later collected alert are different requests, not a delivery-latency measurement. Action allowed is IDS detection, not blocking.
+
+## 12 · Outstanding proof
+
+Retain controlled negatives, migrated IDs, restored FIM intervals, stable clocks, post-reboot services/data and actual NAT removal. Add patch/advisory/rescan evidence before claiming CVEs fixed. The [acceptance matrix](docs/acceptance.md) separates those gaps from the captured positives and completed documentation.

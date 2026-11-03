@@ -65,3 +65,12 @@ Prepared on 15 October 2026 as a **retrospective from supplied evidence**, not a
 **Issue:** The encoded-PowerShell result is built-in 92057/12, not proof that custom 100103 fired. The extra 92213 row cannot be causally attributed from the crop.
 
 **Demonstrated resolution:** All four definitions are transcribed and documented, with observed and configured-only results separated. The parent definition was checked against the release ruleset; no unknown if_sid or search-limit repair is invented.
+
+
+## 09 — Time synchronization added during Week 2
+
+**Source:** execution handoff and NTP-001–011, placed first in the Day 01 walkthrough for future tests. This placement does not imply NTP preceded every older screenshot.
+
+**Observation:** Baku timezones, server Chrony upstream/UDP listener, Linux selection of .132 and Windows source .132,0x8 are captured. The restart transient reports stratum 0 / Not synchronised; the handoff reports recovery through upstream polling and another capture shows stratum 3 / Normal.
+
+**Open:** large virtual-clock frequency correction, Windows root dispersion, external Linux peers, final endpoint isolation and post-reboot verification. No unrecorded drift fix is credited.

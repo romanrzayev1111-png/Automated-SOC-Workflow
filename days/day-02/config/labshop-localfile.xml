@@ -1,0 +1,5 @@
+<!-- Merge into the Linux agent's existing ossec_config on ubuntu-web. -->
+<localfile>
+  <log_format>syslog</log_format>
+  <location>/var/log/labshop/app.log</location>
+</localfile>

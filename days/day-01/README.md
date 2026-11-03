@@ -4,33 +4,32 @@
 
 # Day 01 · Security Monitoring Foundation
 
+## 0. NTP and timezone synchronization
+
 <a id="ntp-time-synchronization"></a>
-## Prerequisite · NTP and timezone synchronization (three-machine lab)
 
-> **Added after the original Day 01 deployment, before the Day 02 tests.** All three machines now use Azerbaijan/Baku local time; `siem-host` is the internal NTP source for both endpoints. Timezone alone changes display, not clock accuracy.
+This is the first technical section of Day 01 so new tests start with comparable timestamps. The setup was added during Week 2; the NTP screenshots are dated 3 November, while some application tests were captured in October. Moving the instructions here does not change that execution history.
 
-| Host | Timezone | Time source |
+**Prerequisite:** the three existing VMs must already be reachable at the addresses below. A timezone changes the displayed time; an NTP source disciplines the clock.
+
+| Host | Timezone | Clock source |
 | :--- | :--- | :--- |
-| `siem-host` · `192.168.38.132` | `Asia/Baku` | Chrony upstream NTP pools, serving `192.168.38.0/24` |
-| `ubuntu-web` · `192.168.38.131` | `Asia/Baku` | Chrony client → `192.168.38.132` |
-| `win-client` · `192.168.38.133` | `Azerbaijan Standard Time` | W32Time → `192.168.38.132` |
+| siem-host · `192.168.38.132` | `Asia/Baku` | Chrony upstream pools; serves the host-only subnet on UDP/123 |
+| ubuntu-web · `192.168.38.131` | `Asia/Baku` | Chrony peer `192.168.38.132` |
+| win-client · `192.168.38.133` | `Azerbaijan Standard Time` | Windows Time peer `192.168.38.132,0x8` |
 
-### 0.1 Set consistent timezone
+The command history comes from the supplied execution handoff. The eleven original screenshots are linked below and in the [NTP evidence register](evidence/ntp/README.md). Results labelled **handoff** are reported in that text but are not visible in the corresponding screenshot.
 
-**siem-host and ubuntu-web** (run separately on each):
+### 0.1 Timezone on all three machines
+
+**Run on:** each Linux VM separately. **Configuration:** system timezone, persistent through `timedatectl`.
 
 ```bash
 sudo timedatectl set-timezone Asia/Baku
 timedatectl status
 ```
 
-<details><summary>Explanation</summary>
-
-`set-timezone` changes local display to UTC+04:00 and persists across reboot. `timedatectl status` verifies timezone and system-clock state. This command does **not** configure an upstream NTP source.
-
-</details>
-
-**win-client** (elevated PowerShell):
+**Run on:** win-client, elevated PowerShell.
 
 ```powershell
 Set-TimeZone -Id "Azerbaijan Standard Time"
@@ -38,39 +37,151 @@ Get-TimeZone
 Get-Date
 ```
 
-<details><summary>Explanation</summary>
+<details>
+<summary><code>timedatectl set-timezone</code> / <code>status</code></summary>
 
-`Set-TimeZone` selects the Windows timezone, `Get-TimeZone` verifies it and `Get-Date` shows the current locally displayed time.
+Selects Baku local time and reads the effective timezone, synchronization and NTP-service state. The Linux captures show `Asia/Baku`, UTC+04 and synchronized=yes; these fields alone do not identify the internal peer.
 
 </details>
 
-### 0.2 siem-host — install and serve Chrony
+<details>
+<summary><code>Set-TimeZone</code>, <code>Get-TimeZone</code>, <code>Get-Date</code></summary>
+
+Sets the Windows timezone, verifies its identifier and displays local time. NTP is configured separately below. The handoff reports the server previously used America/New_York; that initial display is not in this DOCX.
+
+</details>
+<details>
+<summary><strong>Timezone evidence · Linux and Windows</strong></summary>
+
+**NTP-001.** Asia/Baku is configured on ubuntu-web; timedatectl reports synchronized=yes and NTP active. This does not identify the selected NTP peer.
+
+<img src="evidence/ntp/screenshots/001-ubuntu-timezone.png" width="546" alt="Asia/Baku is configured on ubuntu-web; timedatectl reports synchronized=yes and NTP active. This does not identify the selected NTP peer.">
+
+**NTP-002.** siem-host uses Asia/Baku and reports a synchronized system clock with NTP active.
+
+<img src="evidence/ntp/screenshots/002-siem-timezone.png" width="562" alt="siem-host uses Asia/Baku and reports a synchronized system clock with NTP active.">
+
+**NTP-003.** Windows selects Azerbaijan Standard Time and displays the Baku timezone and local date.
+
+<img src="evidence/ntp/screenshots/003-windows-timezone.png" width="480" alt="Windows selects Azerbaijan Standard Time and displays the Baku timezone and local date.">
+
+</details>
+
+### 0.2 siem-host — Chrony server and upstream synchronization
+
+**Run on:** siem-host. **Configuration:** `/etc/chrony/chrony.conf`. **Network:** existing NAT reaches upstream NTP; the host-only subnet is permitted to query UDP/123.
+
+Commands reported in the handoff; service/source/listening results are supported by the captures below:
 
 ```bash
 sudo apt install -y chrony
-sudo grep -qFx 'allow 192.168.38.0/24' /etc/chrony/chrony.conf || echo 'allow 192.168.38.0/24' | sudo tee -a /etc/chrony/chrony.conf
+sudo grep -qFx 'allow 192.168.38.0/24' /etc/chrony/chrony.conf || \
+  echo 'allow 192.168.38.0/24' | sudo tee -a /etc/chrony/chrony.conf
 sudo systemctl enable --now chrony
 sudo systemctl restart chrony
 chronyc tracking
 chronyc sources -n
+chronyc activity
 sudo ss -lunp | grep ':123'
+grep -nE '^[[:space:]]*(server|pool|allow|local)[[:space:]]' /etc/chrony/chrony.conf
 ```
 
-<details><summary>Command-by-command explanation</summary>
+The handoff gives these upstream directives. The screenshot of the file shows the `allow` line, while the source list confirms upstream selection. Merge into the existing file; retain other valid Chrony settings.
 
-- `apt install` adds Chrony; on some Ubuntu configurations it replaces the default time synchronizer.
-- `grep -qFx ... || tee -a` adds the lab-only `allow` ACL once.
-- `enable --now` starts the service and configures boot startup.
-- `restart` applies the updated ACL.
-- `tracking` confirms a usable upstream source, nonzero stratum and `Leap status: Normal`.
-- `sources -n` identifies selectable NTP servers; `^*` denotes the selected source.
-- `ss -lunp` shows that Chrony listens on UDP/123. If a host firewall is enabled, permit UDP/123 from the lab subnet only.
+```conf
+pool ntp.ubuntu.com        iburst maxsources 4
+pool 0.ubuntu.pool.ntp.org iburst maxsources 1
+pool 1.ubuntu.pool.ntp.org iburst maxsources 1
+pool 2.ubuntu.pool.ntp.org iburst maxsources 2
+allow 192.168.38.0/24
+```
+
+<details>
+<summary><code>apt install -y chrony</code></summary>
+
+Installs the service. This command is supplied by the handoff; the DOCX shows the resulting service state, not the package-install transcript.
 
 </details>
 
-**Observed troubleshooting:** immediately after a restart, `Stratum: 0` / `Not synchronised` appeared. Shortly afterward, upstream polls completed and the server reported `Stratum: 3` / `Normal`. Do not mistake that startup transient for the final outcome.
+<details>
+<summary><code>grep -qFx ... || tee -a</code></summary>
 
-### 0.3 ubuntu-web — client of siem-host
+Adds the exact subnet ACL only if it is absent. `allow` permits clients from 192.168.38.0/24; it does not open the host firewall or choose upstream servers.
+
+</details>
+
+<details>
+<summary><code>pool</code>, <code>iburst</code>, <code>maxsources</code></summary>
+
+Keeps upstream clock references available through the server NAT adapter. `iburst` accelerates initial measurements; `maxsources` limits sources obtained from each pool.
+
+</details>
+
+<details>
+<summary><code>systemctl enable --now</code> / <code>restart</code></summary>
+
+Starts Chrony, enables boot startup and reloads the edited configuration. Boot enablement is not a post-reboot test.
+
+</details>
+
+<details>
+<summary><code>chronyc tracking</code></summary>
+
+Checks the selected reference, stratum, offset, frequency correction and leap state. The post-restart capture is stratum 0 / Not synchronised; another capture shows stratum 3 / Normal.
+
+</details>
+
+<details>
+<summary><code>chronyc sources -n</code> / <code>activity</code></summary>
+
+Checks source selection and online status. `^*` identifies the selected server; `-n` avoids name resolution. The handoff reports six online sources and a later Normal state; the screenshot uses `sources -v` and selects 91.234.235.13.
+
+</details>
+
+<details>
+<summary><code>ss -lunp</code> / configuration grep</summary>
+
+Confirms a UDP/123 listener and displays active source/ACL directives. The listener capture shows 0.0.0.0:123. If a firewall is enabled, separately permit UDP/123 from the lab subnet only; no firewall change is captured.
+
+</details>
+
+**Troubleshooting:** an initial read immediately after restart returned Reference ID `00000000`, stratum `0`, and `Not synchronised` even though UDP/123 was listening. The handoff reports recovery after upstream polling, with no extra manual clock fix; the DOCX also contains a synchronized server capture. No settling-time measurement or post-reboot result is supplied.
+
+<details>
+<summary><strong>Chrony server evidence · synchronized state, sources, ACL and restart transient</strong></summary>
+
+**NTP-004.** siem-host Chrony is active, stratum 3, Leap status Normal; frequency correction is 12730.671 ppm slow.
+
+<img src="evidence/ntp/screenshots/004-chrony-upstream-tracking.png" width="509" alt="siem-host Chrony is active, stratum 3, Leap status Normal; frequency correction is 12730.671 ppm slow.">
+
+**NTP-005.** The server source list selects 91.234.235.13 with ^*; it also lists Ubuntu pools and other NTP sources.
+
+<img src="evidence/ntp/screenshots/005-chrony-upstream-sources.png" width="735" alt="The server source list selects 91.234.235.13 with ^*; it also lists Ubuntu pools and other NTP sources.">
+
+**NTP-006.** The server chrony.conf includes allow 192.168.38.0/24. Only the relevant tail of the file is shown.
+
+<img src="evidence/ntp/screenshots/006-chrony-server-subnet-acl.png" width="647" alt="The server chrony.conf includes allow 192.168.38.0/24. Only the relevant tail of the file is shown.">
+
+**NTP-007.** After a Chrony restart, ss shows UDP/123 listening; tracking reports stratum 0 and Not synchronised. This is not the final successful tracking capture.
+
+<img src="evidence/ntp/screenshots/007-chrony-restart-unsynchronized.png" width="864" alt="After a Chrony restart, ss shows UDP/123 listening; tracking reports stratum 0 and Not synchronised. This is not the final successful tracking capture.">
+
+</details>
+
+### 0.3 ubuntu-web — Chrony client
+
+**Run on:** ubuntu-web. **Configuration:** `/etc/chrony/chrony.conf`.
+
+The handoff reports installation and an initial external selection (`time.cloudflare.com`):
+
+```bash
+sudo apt install -y chrony
+systemctl is-active chrony
+chronyc tracking
+chronyc sources -v
+```
+
+The recorded internal-peer addition is:
 
 ```bash
 sudo cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.bak
@@ -80,13 +191,58 @@ chronyc sources -n
 chronyc tracking
 ```
 
-<details><summary>Command-by-command explanation</summary>
+```conf
+server 192.168.38.132 iburst prefer
+```
 
-`cp` preserves rollback. `server` selects the internal monitoring server, `iburst` accelerates initial measurements and `prefer` favors it over other usable sources. After restart, the captured `^* 192.168.38.132` and `Leap status: Normal` confirm real selection. For a fully isolated endpoint, comment out remaining upstream `pool` entries only after internal NTP works.
+<details>
+<summary><code>cp ...chrony.conf.bak</code></summary>
+
+Preserves the current configuration before editing. Avoid overwriting an earlier rollback copy on a rerun.
 
 </details>
 
+<details>
+<summary><code>server 192.168.38.132 iburst prefer</code></summary>
+
+Adds the internal server and favors it among usable sources. Add the line once; compare existing entries before repeating the original append command.
+
+</details>
+
+<details>
+<summary><code>restart</code>, <code>sources -n</code>, <code>tracking</code></summary>
+
+Applies the change and checks actual source selection. The source screenshot selects `^* 192.168.38.132`. The handoff additionally reports reference C0A82684, stratum 4, Normal and an offset of about 0.000042497 seconds; that tracking output is not visible in the client screenshot.
+
+</details>
+<details>
+<summary><strong>Chrony client evidence · peer line and selected internal source</strong></summary>
+
+**NTP-008.** ubuntu-web chrony.conf contains server 192.168.38.132 iburst prefer.
+
+<img src="evidence/ntp/screenshots/008-chrony-client-peer-config.png" width="645" alt="ubuntu-web chrony.conf contains server 192.168.38.132 iburst prefer.">
+
+**NTP-009.** ubuntu-web selects ^* 192.168.38.132; additional external sources remain listed. Internal-only source configuration is not established.
+
+<img src="evidence/ntp/screenshots/009-chrony-client-selected-source.png" width="743" alt="ubuntu-web selects ^* 192.168.38.132; additional external sources remain listed. Internal-only source configuration is not established.">
+
+</details>
+
+**Pending isolation step:** external sources still appear in the captured client source list. The following cleanup was advised in the original conversation; its application is **not confirmed**. After checking the existing file and internal peer, it comments out other active pool/server lines:
+
+```bash
+sudo cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.bak.external
+sudo sed -i -E '/^[[:space:]]*(pool|server)[[:space:]]/ { /192\.168\.38\.132/! s/^/# /; }' /etc/chrony/chrony.conf
+sudo systemctl restart chrony
+chronyc sources -n
+chronyc tracking
+```
+
+Do not mark internal-only NTP complete until the effective source list is retained after this change and after endpoint NAT removal.
+
 ### 0.4 win-client — Windows Time Service
+
+**Run on:** win-client, elevated PowerShell. **Configuration:** Windows Time Service manual peer list and service startup type.
 
 ```powershell
 w32tm /config /manualpeerlist:"192.168.38.132,0x8" /syncfromflags:manual /update
@@ -97,18 +253,63 @@ w32tm /query /source
 w32tm /query /status
 ```
 
-<details><summary>Command-by-command explanation</summary>
+<details>
+<summary><code>w32tm /config</code></summary>
 
-The `manualpeerlist` points Windows at the internal NTP server; `0x8` uses client mode. `syncfromflags:manual` selects that peer; `update` applies configuration. `Set-Service` enables the Windows time service at boot; `Restart-Service` restarts it. `resync` requests a fresh update. `query` verifies the effective source and last successful synchronization. The screenshot records source `192.168.38.132,0x8`, stratum 4 and no leap warning.
+Sets the internal manual peer; `0x8` requests client mode. `/syncfromflags:manual` selects that peer list; `/update` applies the settings.
 
 </details>
 
-**Operational caution:** both Linux VMs reported unusually large Chrony frequency correction (about 12,755 ppm). Investigate VMware guest-host time sync and sustained drift before making precision guarantees. A boot-enabled daemon still requires a reboot test for persistence.
+<details>
+<summary><code>Set-Service</code> / <code>Restart-Service</code></summary>
 
-**Evidence source:** `WEEK2(1).docx` pp. 1–4. See [Day 02](../day-02/README.md) for detection and monitoring outcomes.
+Sets W32Time to Automatic and restarts it. The configuration command and successful resync are captured.
+
+</details>
+
+<details>
+<summary><code>w32tm /resync /rediscover</code></summary>
+
+Requests a new synchronization after rediscovering the configured source. Expect a completed synchronization, not merely an accepted config command.
+
+</details>
+
+<details>
+<summary><code>w32tm /query /source</code> / <code>/status</code></summary>
+
+Verifies the effective peer, stratum, leap indicator and last synchronization. The capture reports source `192.168.38.132,0x8`, stratum 4, no warning and last success 3 November 2026 at 19:48:22 Baku time.
+
+</details>
+<details>
+<summary><strong>Windows time evidence · configuration and effective source</strong></summary>
+
+**NTP-010.** w32tm applies peer 192.168.38.132,0x8; W32Time becomes Automatic, restarts and reports a successful resync.
+
+<img src="evidence/ntp/screenshots/010-windows-ntp-configuration.png" width="746" alt="w32tm applies peer 192.168.38.132,0x8; W32Time becomes Automatic, restarts and reports a successful resync.">
+
+**NTP-011.** Windows reports source 192.168.38.132,0x8, stratum 4, no leap warning and a last successful sync time. Root dispersion is about 8.12 seconds.
+
+<img src="evidence/ntp/screenshots/011-windows-ntp-source-status.png" width="402" alt="Windows reports source 192.168.38.132,0x8, stratum 4, no leap warning and a last successful sync time. Root dispersion is about 8.12 seconds.">
+
+</details>
+
+### 0.5 Verification limits and remaining checks
+
+| Check | Evidence / status |
+| :--- | :--- |
+| Baku timezone on all machines | Captured on Linux and Windows |
+| Server upstream synchronization | Selected upstream and stratum 3 / Normal captured; startup transient also retained |
+| Server serves UDP/123 to the allowed subnet | Listener and `allow 192.168.38.0/24` captured; firewall state not shown |
+| Linux internal peer | Selected ^* 192.168.38.132 captured; external peers still listed |
+| Windows internal peer | Source, stratum 4 and last successful sync captured |
+| Long-term precision | Open: server captures show roughly 12,731–12,758 ppm frequency correction; handoff reports the issue on both Linux VMs |
+| Reboot persistence / final isolation | Open: retain post-reboot sources, service state and final endpoint routes |
+
+A synchronized flag or a small sample offset is not a precision guarantee. Investigate VMware host/guest time synchronization and sustained drift; Windows also reports approximately 8.12 seconds of root dispersion. No virtual-clock fix is claimed here.
+
+[Continue with Day 01](README.md#step-01) · [Day 02 tests](../day-02/README.md) · [NTP source images and hashes](evidence/ntp/README.md)
 
 ---
-
 
 Day 01 covers the VMware network, Wazuh installation, two endpoint agents and the first detection rules. Commands and configuration are shown below; expand an arrow when you need an explanation.
 
@@ -116,7 +317,7 @@ Day 01 covers the VMware network, Wazuh installation, two endpoint agents and th
 
 | Network | Services and agents | Results |
 | :--- | :--- | :--- |
-| [01 · Network](#step-01) | [04 · Docker](#step-04) · [06 · Wazuh](#step-06) | [Evidence register](evidence/README.md) |
+| [00 · NTP](#ntp-time-synchronization) · [01 · Network](#step-01) | [04 · Docker](#step-04) · [06 · Wazuh](#step-06) | [Evidence register](evidence/README.md) |
 | [02 · Full Netplan YAML](#step-02) | [08 · Linux agent](#step-08) · [10 · Windows agent](#step-10) | [Event results](docs/event-validation.md) |
 | [03 · Peer connectivity](#step-03) | [11 · Sysmon](#step-11) · [12 · Full custom XML](#step-12) | [Acceptance matrix](docs/acceptance.md) |
 | [07 · Credential rotation](#step-07) | [13 · Recovery](#step-13) · [14 · Handover](#step-14) | [Implementation journal](journal.md) |
@@ -1094,6 +1295,8 @@ Creates a benign process and looks for recent local Sysmon process-creation even
 ## 12. Custom rules and test events
 
 **Run on:** siem-host for rules; win-client / ubuntu-web for test events
+
+> **Continuing into Day 02:** the XML below preserves the original Day 01 IDs 100100–100103. The Week 2 handoff reports moving their active Sysmon definitions in local_rules.xml to 100200–100203 before loading LabShop rules 100100/100101. Do not reload the historical IDs into a manager already running LabShop. See the [migration note](../day-02/README.md#step-02).
 
 ### 12.1 All four captured rules
 

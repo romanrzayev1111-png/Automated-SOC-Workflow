@@ -6,18 +6,18 @@ I’m documenting my SOC setup here: the network, Wazuh deployment, endpoint tel
 
 **Roman Rzayev**
 
-<p align="center"><a href="days/day-01#step-01"><strong>Open Day 01 walkthrough →</strong></a> &nbsp; · &nbsp; <a href="days/day-01#step-12">Read the custom rules</a> &nbsp; · &nbsp; <a href="days/day-01/evidence">Inspect the evidence</a></p>
+<p align="center"><a href="days/day-01#ntp-time-synchronization"><strong>Day 01 · NTP and setup</strong></a> &nbsp; · &nbsp; <a href="days/day-02"><strong>Day 02 · Monitoring</strong></a> &nbsp; · &nbsp; <a href="days/day-02/evidence">Original evidence</a></p>
 
-![Recorded Day 01 metrics](assets/day-01-metrics.svg)
+![Project documentation](assets/project-metrics.svg)
 
 ## Daily notes
 
 | Day | Build focus | Read it here | Evidence status |
 | :--- | :--- | :--- | :--- |
-| **01** | Monitoring foundation · Wazuh · Sysmon · Windows/Linux; **NTP prerequisite added at the top** | **[Day 01 walkthrough](days/day-01/README.md)** | Platform and selected alerts recorded; acceptance checks tracked |
-| **02** | LabShop rules · FIM · Registry · SCA · Vulnerability inventory · Suricata IDS | **[Day 02 full commands & explanations](days/day-02/README.md)** | Detection and integration recorded; remaining checks documented |
+| **01** | Monitoring foundation · Wazuh · Sysmon · Windows/Linux | **[Commands, full configurations & explanations](days/day-01/README.md)** | Platform and selected alerts recorded; acceptance checks tracked |
+| **02** | LabShop · FIM · SCA · vulnerability inventory · Suricata | **[Implementation, commands & original screenshots](days/day-02/README.md)** | Positive detections and hardening captured; negative-case and operational gaps retained |
 
-Day 02 now continues the project with LabShop detection engineering, Linux/Windows FIM, SCA remediation, vulnerability triage, and Suricata-to-Wazuh integration.
+New work will be added under the next day’s folder.
 
 ## Day 01 · Wazuh setup
 
@@ -72,6 +72,15 @@ The captured inventory lists win-client and ubuntu-web Active on 4.14.7. Full ac
 
 </details>
 
+## Day 02 · Monitoring and detections
+
+| Source | Recorded result | Review |
+| :--- | :--- | :--- |
+| LabShop application log | Failed-login 100100/5 and correlation 100101/10 | [Six test cases, including the unresolved negative](days/day-02/README.md#step-03) |
+| Files / Registry | Linux and Windows file events; Windows Registry modification | [FIM configuration and originals](days/day-02/README.md#step-04) |
+| SCA | Ubuntu passing checks 92→94; Windows 117→118 | [Actual changes and before/after views](days/day-02/README.md#step-09) |
+| Suricata EVE JSON | Custom SID 1000001 reaches built-in Wazuh 86601/3 | [Expanded eve.json-origin proof](days/day-02/README.md#step-16) |
+
 ## Reference notes
 
 - **[Complete Day 01 walkthrough](days/day-01/README.md):** commands, configuration and expandable explanations.
@@ -79,11 +88,14 @@ The captured inventory lists win-client and ubuntu-web Active on 4.14.7. Full ac
 - **[Evidence register](days/day-01/evidence/README.md):** forty original captures and a source/hash manifest.
 - **[Implementation journal](days/day-01/journal.md):** failures, corrections and open actions.
 - **[Acceptance matrix](days/day-01/docs/acceptance.md):** the deployment’s remaining validation work.
+- **[NTP setup and originals](days/day-01/README.md#ntp-time-synchronization):** three-host clock configuration, troubleshooting and source evidence.
+- **[Day 02 results and gaps](days/day-02/docs/acceptance.md):** application tests, FIM, SCA, vulnerability inventory and Suricata EVE delivery.
 
 ## Documentation checks
 
 ```bash
 python3 scripts/build_readmes.py
+python3 scripts/build_day02.py
 python3 scripts/verify_artifacts.py
 ```
 
