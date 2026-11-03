@@ -55,15 +55,15 @@ Sets the Windows timezone, verifies its identifier and displays local time. NTP 
 
 **NTP-001.** Asia/Baku is configured on ubuntu-web; timedatectl reports synchronized=yes and NTP active. This does not identify the selected NTP peer.
 
-<img src="evidence/ntp/screenshots/001-ubuntu-timezone.png" width="546" alt="Asia/Baku is configured on ubuntu-web; timedatectl reports synchronized=yes and NTP active. This does not identify the selected NTP peer.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/001-ubuntu-timezone.png"><img src="evidence/ntp/screenshots/001-ubuntu-timezone.png" width="546" alt="Asia/Baku is configured on ubuntu-web; timedatectl reports synchronized=yes and NTP active. This does not identify the selected NTP peer."></a></td></tr></table>
 
 **NTP-002.** siem-host uses Asia/Baku and reports a synchronized system clock with NTP active.
 
-<img src="evidence/ntp/screenshots/002-siem-timezone.png" width="562" alt="siem-host uses Asia/Baku and reports a synchronized system clock with NTP active.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/002-siem-timezone.png"><img src="evidence/ntp/screenshots/002-siem-timezone.png" width="562" alt="siem-host uses Asia/Baku and reports a synchronized system clock with NTP active."></a></td></tr></table>
 
 **NTP-003.** Windows selects Azerbaijan Standard Time and displays the Baku timezone and local date.
 
-<img src="evidence/ntp/screenshots/003-windows-timezone.png" width="480" alt="Windows selects Azerbaijan Standard Time and displays the Baku timezone and local date.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/003-windows-timezone.png"><img src="evidence/ntp/screenshots/003-windows-timezone.png" width="480" alt="Windows selects Azerbaijan Standard Time and displays the Baku timezone and local date."></a></td></tr></table>
 
 </details>
 
@@ -147,24 +147,24 @@ Confirms a UDP/123 listener and displays active source/ACL directives. The liste
 
 **Troubleshooting:** an initial read immediately after restart returned Reference ID `00000000`, stratum `0`, and `Not synchronised` even though UDP/123 was listening. The handoff reports recovery after upstream polling, with no extra manual clock fix; the DOCX also contains a synchronized server capture. No settling-time measurement or post-reboot result is supplied.
 
-<details>
-<summary><strong>Chrony server evidence · synchronized state, sources, ACL and restart transient</strong></summary>
-
 **NTP-004.** siem-host Chrony is active, stratum 3, Leap status Normal; frequency correction is 12730.671 ppm slow.
 
-<img src="evidence/ntp/screenshots/004-chrony-upstream-tracking.png" width="509" alt="siem-host Chrony is active, stratum 3, Leap status Normal; frequency correction is 12730.671 ppm slow.">
-
-**NTP-005.** The server source list selects 91.234.235.13 with ^*; it also lists Ubuntu pools and other NTP sources.
-
-<img src="evidence/ntp/screenshots/005-chrony-upstream-sources.png" width="735" alt="The server source list selects 91.234.235.13 with ^*; it also lists Ubuntu pools and other NTP sources.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/004-chrony-upstream-tracking.png"><img src="evidence/ntp/screenshots/004-chrony-upstream-tracking.png" width="509" alt="siem-host Chrony is active, stratum 3, Leap status Normal; frequency correction is 12730.671 ppm slow."></a></td></tr></table>
 
 **NTP-006.** The server chrony.conf includes allow 192.168.38.0/24. Only the relevant tail of the file is shown.
 
-<img src="evidence/ntp/screenshots/006-chrony-server-subnet-acl.png" width="647" alt="The server chrony.conf includes allow 192.168.38.0/24. Only the relevant tail of the file is shown.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/006-chrony-server-subnet-acl.png"><img src="evidence/ntp/screenshots/006-chrony-server-subnet-acl.png" width="647" alt="The server chrony.conf includes allow 192.168.38.0/24. Only the relevant tail of the file is shown."></a></td></tr></table>
+
+<details>
+<summary><strong>Supporting screenshots · Chrony server evidence · synchronized state, sources, ACL and restart transient</strong></summary>
+
+**NTP-005.** The server source list selects 91.234.235.13 with ^*; it also lists Ubuntu pools and other NTP sources.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/005-chrony-upstream-sources.png"><img src="evidence/ntp/screenshots/005-chrony-upstream-sources.png" width="735" alt="The server source list selects 91.234.235.13 with ^*; it also lists Ubuntu pools and other NTP sources."></a></td></tr></table>
 
 **NTP-007.** After a Chrony restart, ss shows UDP/123 listening; tracking reports stratum 0 and Not synchronised. This is not the final successful tracking capture.
 
-<img src="evidence/ntp/screenshots/007-chrony-restart-unsynchronized.png" width="864" alt="After a Chrony restart, ss shows UDP/123 listening; tracking reports stratum 0 and Not synchronised. This is not the final successful tracking capture.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/007-chrony-restart-unsynchronized.png"><img src="evidence/ntp/screenshots/007-chrony-restart-unsynchronized.png" width="860" alt="After a Chrony restart, ss shows UDP/123 listening; tracking reports stratum 0 and Not synchronised. This is not the final successful tracking capture."></a></td></tr></table>
 
 </details>
 
@@ -215,16 +215,16 @@ Adds the internal server and favors it among usable sources. Add the line once; 
 Applies the change and checks actual source selection. The source screenshot selects `^* 192.168.38.132`. The handoff additionally reports reference C0A82684, stratum 4, Normal and an offset of about 0.000042497 seconds; that tracking output is not visible in the client screenshot.
 
 </details>
+**NTP-009.** ubuntu-web selects ^* 192.168.38.132; additional external sources remain listed. Internal-only source configuration is not established.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/009-chrony-client-selected-source.png"><img src="evidence/ntp/screenshots/009-chrony-client-selected-source.png" width="743" alt="ubuntu-web selects ^* 192.168.38.132; additional external sources remain listed. Internal-only source configuration is not established."></a></td></tr></table>
+
 <details>
-<summary><strong>Chrony client evidence · peer line and selected internal source</strong></summary>
+<summary><strong>Supporting screenshots · Chrony client evidence · peer line and selected internal source</strong></summary>
 
 **NTP-008.** ubuntu-web chrony.conf contains server 192.168.38.132 iburst prefer.
 
-<img src="evidence/ntp/screenshots/008-chrony-client-peer-config.png" width="645" alt="ubuntu-web chrony.conf contains server 192.168.38.132 iburst prefer.">
-
-**NTP-009.** ubuntu-web selects ^* 192.168.38.132; additional external sources remain listed. Internal-only source configuration is not established.
-
-<img src="evidence/ntp/screenshots/009-chrony-client-selected-source.png" width="743" alt="ubuntu-web selects ^* 192.168.38.132; additional external sources remain listed. Internal-only source configuration is not established.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/008-chrony-client-peer-config.png"><img src="evidence/ntp/screenshots/008-chrony-client-peer-config.png" width="645" alt="ubuntu-web chrony.conf contains server 192.168.38.132 iburst prefer."></a></td></tr></table>
 
 </details>
 
@@ -280,16 +280,16 @@ Requests a new synchronization after rediscovering the configured source. Expect
 Verifies the effective peer, stratum, leap indicator and last synchronization. The capture reports source `192.168.38.132,0x8`, stratum 4, no warning and last success 3 November 2026 at 19:48:22 Baku time.
 
 </details>
+**NTP-011.** Windows reports source 192.168.38.132,0x8, stratum 4, no leap warning and a last successful sync time. Root dispersion is about 8.12 seconds.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/011-windows-ntp-source-status.png"><img src="evidence/ntp/screenshots/011-windows-ntp-source-status.png" width="402" alt="Windows reports source 192.168.38.132,0x8, stratum 4, no leap warning and a last successful sync time. Root dispersion is about 8.12 seconds."></a></td></tr></table>
+
 <details>
-<summary><strong>Windows time evidence · configuration and effective source</strong></summary>
+<summary><strong>Supporting screenshots · Windows time evidence · configuration and effective source</strong></summary>
 
 **NTP-010.** w32tm applies peer 192.168.38.132,0x8; W32Time becomes Automatic, restarts and reports a successful resync.
 
-<img src="evidence/ntp/screenshots/010-windows-ntp-configuration.png" width="746" alt="w32tm applies peer 192.168.38.132,0x8; W32Time becomes Automatic, restarts and reports a successful resync.">
-
-**NTP-011.** Windows reports source 192.168.38.132,0x8, stratum 4, no leap warning and a last successful sync time. Root dispersion is about 8.12 seconds.
-
-<img src="evidence/ntp/screenshots/011-windows-ntp-source-status.png" width="402" alt="Windows reports source 192.168.38.132,0x8, stratum 4, no leap warning and a last successful sync time. Root dispersion is about 8.12 seconds.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/ntp/screenshots/010-windows-ntp-configuration.png"><img src="evidence/ntp/screenshots/010-windows-ntp-configuration.png" width="746" alt="w32tm applies peer 192.168.38.132,0x8; W32Time becomes Automatic, restarts and reports a successful resync."></a></td></tr></table>
 
 </details>
 
@@ -340,14 +340,11 @@ Day 01 covers the VMware network, Wazuh installation, two endpoint agents and th
 | Windows logon failure and three custom discovery IDs | Successful sudo, Linux user creation and full raw-event context |
 | Corrected SSH failure plus an alert listing | Restart/reboot persistence, idle memory and snapshot inventory |
 
-<details>
-<summary><strong>Open the recorded two-agent dashboard</strong></summary>
+**Recorded two-agent dashboard**
 
-![Two Active endpoint agents](evidence/screenshots/image26.png)
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/image26.png"><img src="evidence/screenshots/image26.png" width="860" alt="Two Active endpoint agents"></a></td></tr></table>
 
 E26 shows win-client and ubuntu-web Active on 4.14.7.
-
-</details>
 
 > **Validation:** Results below come from the supplied VM captures. Documentation checks cover source versions, syntax and file integrity; the original VMs were not replayed here.
 
@@ -415,6 +412,12 @@ Allows the monitoring server to download packages/images. Endpoints use temporar
 Provide identifiable recovery points. Their names must reflect when they were actually taken.
 
 </details>
+
+**Recorded virtual network**
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/image4.png"><img src="evidence/screenshots/image4.png" width="591" alt="VMnet1 host-only configuration"></a></td></tr></table>
+
+E04 shows VMnet1 as host-only; DHCP remains enabled in this capture.
 
 
 <a id="step-02"></a>
@@ -880,14 +883,11 @@ Reads recent indexer, manager and dashboard output to diagnose initialization pr
 
 </details>
 
-<details>
-<summary><strong>Recorded result · three Wazuh containers</strong></summary>
+**Recorded result · three Wazuh containers**
 
-![Wazuh container inventory](evidence/screenshots/image18.png)
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/image18.png"><img src="evidence/screenshots/image18.png" width="860" alt="Wazuh container inventory"></a></td></tr></table>
 
 E18 records 4.14.7 containers Up at capture time.
-
-</details>
 
 
 <a id="step-07"></a>
@@ -1286,6 +1286,12 @@ Creates a benign process and looks for recent local Sysmon process-creation even
 
 </details>
 
+**Recorded Sysmon service**
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/image11.png"><img src="evidence/screenshots/image11.png" width="817" alt="Sysmon installation and service state"></a></td></tr></table>
+
+E11 shows Sysmon64 Running. Dashboard process-event results are shown in the following section.
+
 
 ![Detection engineering](../../assets/detections.svg)
 
@@ -1513,9 +1519,15 @@ Narrow the event view; retain rule IDs, levels, descriptions, timestamps and age
 
 **Recorded detection output**
 
-![Windows discovery rule results](evidence/screenshots/image34.png)
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/image34.png"><img src="evidence/screenshots/image34.png" width="860" alt="Windows discovery rule results"></a></td></tr></table>
 
 E34 shows 100100, 100101 and 100102; encoded PowerShell is reported by built-in 92057.
+
+**Recorded failed Windows logon**
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/image32.png"><img src="evidence/screenshots/image32.png" width="860" alt="Windows failed-logon alert"></a></td></tr></table>
+
+E32 records win-client with rule 60122 at level 5.
 
 
 <a id="step-13"></a>

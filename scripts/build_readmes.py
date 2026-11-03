@@ -3,6 +3,7 @@
 from pathlib import Path
 from html import escape
 import re
+from screenshot_layout import NTP_PRIMARY, prioritize, frame_screenshots
 
 ROOT = Path(__file__).resolve().parents[1]
 DAY = ROOT / 'days/day-01'
@@ -104,9 +105,14 @@ def make_day():
         else:
             part += explanation(EXPLAIN[n])
         if n == 6:
-            part += '\n<details>\n<summary><strong>Recorded result · three Wazuh containers</strong></summary>\n\n![Wazuh container inventory](evidence/screenshots/image18.png)\n\nE18 records 4.14.7 containers Up at capture time.\n\n</details>\n'
+            part += '\n**Recorded result · three Wazuh containers**\n\n![Wazuh container inventory](evidence/screenshots/image18.png)\n\nE18 records 4.14.7 containers Up at capture time.\n'
+        if n == 1:
+            part += '\n**Recorded virtual network**\n\n![VMnet1 host-only configuration](evidence/screenshots/image4.png)\n\nE04 shows VMnet1 as host-only; DHCP remains enabled in this capture.\n'
+        if n == 11:
+            part += '\n**Recorded Sysmon service**\n\n![Sysmon installation and service state](evidence/screenshots/image11.png)\n\nE11 shows Sysmon64 Running. Dashboard process-event results are shown in the following section.\n'
         if n == 12:
             part += '\n**Recorded detection output**\n\n![Windows discovery rule results](evidence/screenshots/image34.png)\n\nE34 shows 100100, 100101 and 100102; encoded PowerShell is reported by built-in 92057.\n'
+            part += '\n**Recorded failed Windows logon**\n\n![Windows failed-logon alert](evidence/screenshots/image32.png)\n\nE32 records win-client with rule 60122 at level 5.\n'
         prefix = f'\n<a id="step-{n:02d}"></a>\n\n'
         if n in banners:
             filename, label = banners[n]
@@ -147,14 +153,11 @@ Day 01 covers the VMware network, Wazuh installation, two endpoint agents and th
 | Windows logon failure and three custom discovery IDs | Successful sudo, Linux user creation and full raw-event context |
 | Corrected SSH failure plus an alert listing | Restart/reboot persistence, idle memory and snapshot inventory |
 
-<details>
-<summary><strong>Open the recorded two-agent dashboard</strong></summary>
+**Recorded two-agent dashboard**
 
 ![Two Active endpoint agents](evidence/screenshots/image26.png)
 
 E26 shows win-client and ubuntu-web Active on 4.14.7.
-
-</details>
 
 > **Validation:** Results below come from the supplied VM captures. Documentation checks cover source versions, syntax and file integrity; the original VMs were not replayed here.
 
@@ -192,7 +195,10 @@ Prepared by Roman Rzayev.
     marker = '# Day 01 · Security Monitoring Foundation\n'
     intro = intro.replace(marker, marker + '\n' + ntp + '\n---\n')
     intro = intro.replace('| [01 · Network](#step-01)', '| [00 · NTP](#ntp-time-synchronization) · [01 · Network](#step-01)')
-    (DAY / 'README.md').write_text(intro + '\n'.join(rendered) + footer)
+    page = intro + '\n'.join(rendered) + footer
+    page = prioritize(page, NTP_PRIMARY)
+    page = frame_screenshots(page, DAY)
+    (DAY / 'README.md').write_text(page)
 
 
 def make_root():

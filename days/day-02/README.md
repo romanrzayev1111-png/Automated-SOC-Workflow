@@ -4,7 +4,7 @@
 
 # Day 02 · Detection and endpoint monitoring
 
-This day adds application detections, file/Registry monitoring, SCA hardening and a Suricata HTTP rule to the existing deployment. Commands and configuration are shown inline. Expand an arrow for command notes or original screenshots.
+This day adds application detections, file/Registry monitoring, SCA hardening and a Suricata HTTP rule to the existing deployment. Commands and key results are shown inline. Expand an arrow for command notes or supporting screenshots; click an image to open its original resolution.
 
 ![Day 02 coverage](../../assets/day-02-metrics.svg)
 
@@ -124,13 +124,13 @@ Shows the effective collection entry with line numbers. Expect one matching loca
 
 **W2-012.** tail shows syslog-style LabShop LOGIN_FAILED records with user and src fields in /var/log/labshop/app.log.
 
-<img src="evidence/screenshots/012-labshop-log-format.png" width="764" alt="tail shows syslog-style LabShop LOGIN_FAILED records with user and src fields in /var/log/labshop/app.log.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/012-labshop-log-format.png"><img src="evidence/screenshots/012-labshop-log-format.png" width="764" alt="tail shows syslog-style LabShop LOGIN_FAILED records with user and src fields in /var/log/labshop/app.log."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/012-labshop-log-format.png)
 
 **W2-013.** The endpoint localfile fragment collects /var/log/labshop/app.log as syslog.
 
-<img src="evidence/screenshots/013-labshop-agent-localfile.png" width="455" alt="The endpoint localfile fragment collects /var/log/labshop/app.log as syslog.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/013-labshop-agent-localfile.png"><img src="evidence/screenshots/013-labshop-agent-localfile.png" width="455" alt="The endpoint localfile fragment collects /var/log/labshop/app.log as syslog."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/013-labshop-agent-localfile.png)
 
@@ -301,26 +301,26 @@ Tests actual pre-decoding, extracted fields and final rule selection for the inp
 Reloads the manager after validation. Recheck the service and agents; this is not a reboot-persistence result.
 
 </details>
-<details>
-<summary><strong>Final decoder, Phase 2 fields and rule definitions</strong></summary>
-
-**W2-014.** The captured parent/child decoders match program labshop and extract action,dstuser,srcip using a leading \w+ action capture.
-
-<img src="evidence/screenshots/014-labshop-decoder-definitions.png" width="403" alt="The captured parent/child decoders match program labshop and extract action,dstuser,srcip using a leading \w+ action capture.">
-
-[Open original PNG](evidence/screenshots/014-labshop-decoder-definitions.png)
-
 **W2-015.** Wazuh-logtest 4.14.7 decodes LOGIN_FAILED, admin and 192.168.38.133. The capture establishes Phase 2 fields.
 
-<img src="evidence/screenshots/015-labshop-decoder-logtest.png" width="962" alt="Wazuh-logtest 4.14.7 decodes LOGIN_FAILED, admin and 192.168.38.133. The capture establishes Phase 2 fields.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/015-labshop-decoder-logtest.png"><img src="evidence/screenshots/015-labshop-decoder-logtest.png" width="860" alt="Wazuh-logtest 4.14.7 decodes LOGIN_FAILED, admin and 192.168.38.133. The capture establishes Phase 2 fields."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/015-labshop-decoder-logtest.png)
 
 **W2-016.** Rules 100100/5 and 100101/10 use action, monitor exclusion, frequency=5, timeframe=60, same_srcip and MITRE T1110.
 
-<img src="evidence/screenshots/016-labshop-rule-definitions.png" width="955" alt="Rules 100100/5 and 100101/10 use action, monitor exclusion, frequency=5, timeframe=60, same_srcip and MITRE T1110.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/016-labshop-rule-definitions.png"><img src="evidence/screenshots/016-labshop-rule-definitions.png" width="860" alt="Rules 100100/5 and 100101/10 use action, monitor exclusion, frequency=5, timeframe=60, same_srcip and MITRE T1110."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/016-labshop-rule-definitions.png)
+
+<details>
+<summary><strong>Supporting screenshots · Final decoder, Phase 2 fields and rule definitions</strong></summary>
+
+**W2-014.** The captured parent/child decoders match program labshop and extract action,dstuser,srcip using a leading \w+ action capture.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/014-labshop-decoder-definitions.png"><img src="evidence/screenshots/014-labshop-decoder-definitions.png" width="403" alt="The captured parent/child decoders match program labshop and extract action,dstuser,srcip using a leading \w+ action capture."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/014-labshop-decoder-definitions.png)
 
 </details>
 
@@ -349,20 +349,20 @@ Use separate correlation windows when repeating cases. The original captures are
 
 The capture shows this invocation repeated three times. W2-018 records three `ubuntu-web` rows with **100100 / level 5** and the failed-login description.
 
+**W2-018.** Three ubuntu-web dashboard rows show failed-login rule 100100 at level 5.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/018-test1-single-failure-dashboard.png"><img src="evidence/screenshots/018-test1-single-failure-dashboard.png" width="860" alt="Three ubuntu-web dashboard rows show failed-login rule 100100 at level 5."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/018-test1-single-failure-dashboard.png)
+
 <details>
-<summary><strong>Test 1 · command and positive dashboard result</strong></summary>
+<summary><strong>Supporting screenshots · Test 1 · command and positive dashboard result</strong></summary>
 
 **W2-017.** The generator is invoked three times with fail admin 192.168.38.133 1.
 
-<img src="evidence/screenshots/017-test1-single-failure-command.png" width="772" alt="The generator is invoked three times with fail admin 192.168.38.133 1.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/017-test1-single-failure-command.png"><img src="evidence/screenshots/017-test1-single-failure-command.png" width="772" alt="The generator is invoked three times with fail admin 192.168.38.133 1."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/017-test1-single-failure-command.png)
-
-**W2-018.** Three ubuntu-web dashboard rows show failed-login rule 100100 at level 5.
-
-<img src="evidence/screenshots/018-test1-single-failure-dashboard.png" width="1000" alt="Three ubuntu-web dashboard rows show failed-login rule 100100 at level 5.">
-
-[Open original PNG](evidence/screenshots/018-test1-single-failure-dashboard.png)
 
 </details>
 
@@ -374,20 +374,20 @@ The capture shows this invocation repeated three times. W2-018 records three `ub
 
 This command is also repeated three times in the source. The dashboard shows **100101 / level 10**. The code configures frequency=5/timeframe=60; the evidence does not establish that one isolated group of exactly five events fires at a precisely measured time.
 
+**W2-020.** The dashboard shows three 100101 level-10 correlation alerts; the description says five failures in 60 seconds.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/020-test2-brute-force-dashboard.png"><img src="evidence/screenshots/020-test2-brute-force-dashboard.png" width="860" alt="The dashboard shows three 100101 level-10 correlation alerts; the description says five failures in 60 seconds."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/020-test2-brute-force-dashboard.png)
+
 <details>
-<summary><strong>Test 2 · bulk generation and correlation alert</strong></summary>
+<summary><strong>Supporting screenshots · Test 2 · bulk generation and correlation alert</strong></summary>
 
 **W2-019.** The generator is invoked three times with fail admin 192.168.38.133 6. Exact per-event timing is not shown.
 
-<img src="evidence/screenshots/019-test2-brute-force-command.png" width="767" alt="The generator is invoked three times with fail admin 192.168.38.133 6. Exact per-event timing is not shown.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/019-test2-brute-force-command.png"><img src="evidence/screenshots/019-test2-brute-force-command.png" width="767" alt="The generator is invoked three times with fail admin 192.168.38.133 6. Exact per-event timing is not shown."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/019-test2-brute-force-command.png)
-
-**W2-020.** The dashboard shows three 100101 level-10 correlation alerts; the description says five failures in 60 seconds.
-
-<img src="evidence/screenshots/020-test2-brute-force-dashboard.png" width="1000" alt="The dashboard shows three 100101 level-10 correlation alerts; the description says five failures in 60 seconds.">
-
-[Open original PNG](evidence/screenshots/020-test2-brute-force-dashboard.png)
 
 </details>
 
@@ -399,20 +399,20 @@ This command is also repeated three times in the source. The dashboard shows **1
 
 Three invocations appear in W2-021. A manual logtest of the same account extracts the expected fields and ends at **generic rule 1002 / level 2**, not custom 100100/100101. The screenshot title “No rule triggered” is too broad: the custom detector is excluded, but a generic rule does match.
 
+**W2-022.** monitor decodes correctly and does not match the custom failure rule in the displayed test; generic rule 1002, level 2, does match. This is not a zero-rule result.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/022-test3-monitor-logtest-fallback.png"><img src="evidence/screenshots/022-test3-monitor-logtest-fallback.png" width="860" alt="monitor decodes correctly and does not match the custom failure rule in the displayed test; generic rule 1002, level 2, does match. This is not a zero-rule result."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/022-test3-monitor-logtest-fallback.png)
+
 <details>
-<summary><strong>Test 3 · exclusion and generic fallback</strong></summary>
+<summary><strong>Supporting screenshots · Test 3 · exclusion and generic fallback</strong></summary>
 
 **W2-021.** Three generator invocations use fail monitor 10.10.10.1 1.
 
-<img src="evidence/screenshots/021-test3-monitor-account-command.png" width="741" alt="Three generator invocations use fail monitor 10.10.10.1 1.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/021-test3-monitor-account-command.png"><img src="evidence/screenshots/021-test3-monitor-account-command.png" width="741" alt="Three generator invocations use fail monitor 10.10.10.1 1."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/021-test3-monitor-account-command.png)
-
-**W2-022.** monitor decodes correctly and does not match the custom failure rule in the displayed test; generic rule 1002, level 2, does match. This is not a zero-rule result.
-
-<img src="evidence/screenshots/022-test3-monitor-logtest-fallback.png" width="938" alt="monitor decodes correctly and does not match the custom failure rule in the displayed test; generic rule 1002, level 2, does match. This is not a zero-rule result.">
-
-[Open original PNG](evidence/screenshots/022-test3-monitor-logtest-fallback.png)
 
 </details>
 
@@ -425,20 +425,20 @@ Three invocations appear in W2-021. A manual logtest of the same account extract
 
 **Expected:** independent sources should not be combined by `same_srcip`. **Recorded:** W2-024 nevertheless includes a 100101/10 row plus two 100100/5 rows. The crop omits source-IP fields and previous event context. It proves neither a clean negative result nor that the engine ignored `same_srcip`. Repeat this case in an isolated window and retain expanded source fields before accepting it as a passed negative test.
 
+**W2-024.** The associated dashboard crop includes 100101/10 and two 100100/5 rows. Source-IP fields and full test context are absent; a clean negative result is not demonstrated.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/024-test4-split-source-dashboard.png"><img src="evidence/screenshots/024-test4-split-source-dashboard.png" width="860" alt="The associated dashboard crop includes 100101/10 and two 100100/5 rows. Source-IP fields and full test context are absent; a clean negative result is not demonstrated."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/024-test4-split-source-dashboard.png)
+
 <details>
-<summary><strong>Test 4 · retained conflicting result</strong></summary>
+<summary><strong>Supporting screenshots · Test 4 · retained conflicting result</strong></summary>
 
 **W2-023.** Two generator invocations request three failures from 10.10.10.50 and three from 10.10.10.60.
 
-<img src="evidence/screenshots/023-test4-split-source-command.png" width="739" alt="Two generator invocations request three failures from 10.10.10.50 and three from 10.10.10.60.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/023-test4-split-source-command.png"><img src="evidence/screenshots/023-test4-split-source-command.png" width="739" alt="Two generator invocations request three failures from 10.10.10.50 and three from 10.10.10.60."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/023-test4-split-source-command.png)
-
-**W2-024.** The associated dashboard crop includes 100101/10 and two 100100/5 rows. Source-IP fields and full test context are absent; a clean negative result is not demonstrated.
-
-<img src="evidence/screenshots/024-test4-split-source-dashboard.png" width="1000" alt="The associated dashboard crop includes 100101/10 and two 100100/5 rows. Source-IP fields and full test context are absent; a clean negative result is not demonstrated.">
-
-[Open original PNG](evidence/screenshots/024-test4-split-source-dashboard.png)
 
 </details>
 
@@ -456,13 +456,13 @@ Two generator invocations appear in W2-025; W2-026 shows the latest two `LOGIN_O
 
 **W2-025.** The generator is invoked twice with ok alice 10.10.10.50 2.
 
-<img src="evidence/screenshots/025-test5-successful-login-command.png" width="703" alt="The generator is invoked twice with ok alice 10.10.10.50 2.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/025-test5-successful-login-command.png"><img src="evidence/screenshots/025-test5-successful-login-command.png" width="703" alt="The generator is invoked twice with ok alice 10.10.10.50 2."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/025-test5-successful-login-command.png)
 
 **W2-026.** The raw log contains LOGIN_OK records for alice. This does not independently verify the absence of a custom dashboard alert.
 
-<img src="evidence/screenshots/026-test5-successful-login-log.png" width="721" alt="The raw log contains LOGIN_OK records for alice. This does not independently verify the absence of a custom dashboard alert.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/026-test5-successful-login-log.png"><img src="evidence/screenshots/026-test5-successful-login-log.png" width="721" alt="The raw log contains LOGIN_OK records for alice. This does not independently verify the absence of a custom dashboard alert."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/026-test5-successful-login-log.png)
 
@@ -488,13 +488,13 @@ The message keeps a valid syslog prefix but omits the expected `user=... src=...
 
 **W2-027.** An INVALID_DATA test=hello message is appended with a syslog-style prefix; tail shows the resulting raw line.
 
-<img src="evidence/screenshots/027-test6-malformed-log-command.png" width="1000" alt="An INVALID_DATA test=hello message is appended with a syslog-style prefix; tail shows the resulting raw line.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/027-test6-malformed-log-command.png"><img src="evidence/screenshots/027-test6-malformed-log-command.png" width="860" alt="An INVALID_DATA test=hello message is appended with a syslog-style prefix; tail shows the resulting raw line."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/027-test6-malformed-log-command.png)
 
 **W2-028.** The malformed line reaches Phase 1 pre-decoding, with hostname and program_name. Structured field extraction and the final rule verdict are not shown.
 
-<img src="evidence/screenshots/028-test6-malformed-logtest.png" width="805" alt="The malformed line reaches Phase 1 pre-decoding, with hostname and program_name. Structured field extraction and the final rule verdict are not shown.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/028-test6-malformed-logtest.png"><img src="evidence/screenshots/028-test6-malformed-logtest.png" width="805" alt="The malformed line reaches Phase 1 pre-decoding, with hostname and program_name. Structured field extraction and the final rule verdict are not shown."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/028-test6-malformed-logtest.png)
 
@@ -609,32 +609,32 @@ Deletes the known regular test file without recursively removing a directory. Th
 File-added **554/5**, integrity-changed **550/7** and file-deleted **553/7** appear. No precise latency average is derived from these captures.
 
 </details>
-<details>
-<summary><strong>Linux FIM · configuration, create event and realtime fields</strong></summary>
-
 **W2-029.** The Linux syscheck configuration adds realtime/check_all/report_changes monitoring for /var/www/html.
 
-<img src="evidence/screenshots/029-linux-realtime-fim-config.png" width="847" alt="The Linux syscheck configuration adds realtime/check_all/report_changes monitoring for /var/www/html.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/029-linux-realtime-fim-config.png"><img src="evidence/screenshots/029-linux-realtime-fim-config.png" width="847" alt="The Linux syscheck configuration adds realtime/check_all/report_changes monitoring for /var/www/html."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/029-linux-realtime-fim-config.png)
 
+**W2-032.** The expanded record identifies syscheck.mode=realtime and path /var/www/html/fim-test, with timestamps and hash fields.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/032-linux-fim-realtime-detail.png"><img src="evidence/screenshots/032-linux-fim-realtime-detail.png" width="449" alt="The expanded record identifies syscheck.mode=realtime and path /var/www/html/fim-test, with timestamps and hash fields."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/032-linux-fim-realtime-detail.png)
+
+<details>
+<summary><strong>Supporting screenshots · Linux FIM · configuration, create event and realtime fields</strong></summary>
+
 **W2-030.** touch creates /var/www/html/fim-test.
 
-<img src="evidence/screenshots/030-linux-fim-create-command.png" width="621" alt="touch creates /var/www/html/fim-test.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/030-linux-fim-create-command.png"><img src="evidence/screenshots/030-linux-fim-create-command.png" width="621" alt="touch creates /var/www/html/fim-test."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/030-linux-fim-create-command.png)
 
 **W2-031.** ubuntu-web rows show file-added rule 554/5 and integrity-changed rule 550/7.
 
-<img src="evidence/screenshots/031-linux-fim-create-dashboard.png" width="1000" alt="ubuntu-web rows show file-added rule 554/5 and integrity-changed rule 550/7.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/031-linux-fim-create-dashboard.png"><img src="evidence/screenshots/031-linux-fim-create-dashboard.png" width="860" alt="ubuntu-web rows show file-added rule 554/5 and integrity-changed rule 550/7."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/031-linux-fim-create-dashboard.png)
-
-**W2-032.** The expanded record identifies syscheck.mode=realtime and path /var/www/html/fim-test, with timestamps and hash fields.
-
-<img src="evidence/screenshots/032-linux-fim-realtime-detail.png" width="449" alt="The expanded record identifies syscheck.mode=realtime and path /var/www/html/fim-test, with timestamps and hash fields.">
-
-[Open original PNG](evidence/screenshots/032-linux-fim-realtime-detail.png)
 
 </details>
 <details>
@@ -642,25 +642,25 @@ File-added **554/5**, integrity-changed **550/7** and file-deleted **553/7** app
 
 **W2-033.** echo overwrites the monitored test file with Modified Content.
 
-<img src="evidence/screenshots/033-linux-fim-modify-command.png" width="792" alt="echo overwrites the monitored test file with Modified Content.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/033-linux-fim-modify-command.png"><img src="evidence/screenshots/033-linux-fim-modify-command.png" width="792" alt="echo overwrites the monitored test file with Modified Content."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/033-linux-fim-modify-command.png)
 
 **W2-034.** The dashboard lists integrity-changed rule 550 at level 7 for ubuntu-web.
 
-<img src="evidence/screenshots/034-linux-fim-modify-dashboard.png" width="1000" alt="The dashboard lists integrity-changed rule 550 at level 7 for ubuntu-web.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/034-linux-fim-modify-dashboard.png"><img src="evidence/screenshots/034-linux-fim-modify-dashboard.png" width="860" alt="The dashboard lists integrity-changed rule 550 at level 7 for ubuntu-web."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/034-linux-fim-modify-dashboard.png)
 
 **W2-035.** The terminal deletes the single test path with rm -rf. The guide uses rm -- for a known regular file as an explicitly safer replay.
 
-<img src="evidence/screenshots/035-linux-fim-delete-command.png" width="627" alt="The terminal deletes the single test path with rm -rf. The guide uses rm -- for a known regular file as an explicitly safer replay.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/035-linux-fim-delete-command.png"><img src="evidence/screenshots/035-linux-fim-delete-command.png" width="627" alt="The terminal deletes the single test path with rm -rf. The guide uses rm -- for a known regular file as an explicitly safer replay."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/035-linux-fim-delete-command.png)
 
 **W2-036.** The dashboard includes File deleted rule 553 at level 7.
 
-<img src="evidence/screenshots/036-linux-fim-delete-dashboard.png" width="1000" alt="The dashboard includes File deleted rule 553 at level 7.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/036-linux-fim-delete-dashboard.png"><img src="evidence/screenshots/036-linux-fim-delete-dashboard.png" width="860" alt="The dashboard includes File deleted rule 553 at level 7."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/036-linux-fim-delete-dashboard.png)
 
@@ -730,54 +730,54 @@ Deletes this test file; the dashboard shows file-deleted 553/7.
 The directory path is on win-client. These realtime file options do not make Registry monitoring realtime.
 
 </details>
-<details>
-<summary><strong>Windows file FIM · configuration and creation</strong></summary>
-
 **W2-037.** Select-String shows realtime file monitoring for C:\LabShopData and arch=both registry monitoring for HKLM\SOFTWARE\LabShop.
 
-<img src="evidence/screenshots/037-windows-fim-registry-config.png" width="694" alt="Select-String shows realtime file monitoring for C:\LabShopData and arch=both registry monitoring for HKLM\SOFTWARE\LabShop.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/037-windows-fim-registry-config.png"><img src="evidence/screenshots/037-windows-fim-registry-config.png" width="694" alt="Select-String shows realtime file monitoring for C:\LabShopData and arch=both registry monitoring for HKLM\SOFTWARE\LabShop."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/037-windows-fim-registry-config.png)
 
+<details>
+<summary><strong>Supporting screenshots · Windows file FIM · configuration and creation</strong></summary>
+
 **W2-038.** Set-Content writes Original LabShop Data to C:\LabShopData\test.txt.
 
-<img src="evidence/screenshots/038-windows-fim-create-command.png" width="702" alt="Set-Content writes Original LabShop Data to C:\LabShopData\test.txt.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/038-windows-fim-create-command.png"><img src="evidence/screenshots/038-windows-fim-create-command.png" width="702" alt="Set-Content writes Original LabShop Data to C:\LabShopData\test.txt."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/038-windows-fim-create-command.png)
 
 **W2-039.** win-client inventory rows show file-added 554/5 and integrity-changed 550/7.
 
-<img src="evidence/screenshots/039-windows-fim-create-dashboard.png" width="1000" alt="win-client inventory rows show file-added 554/5 and integrity-changed 550/7.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/039-windows-fim-create-dashboard.png"><img src="evidence/screenshots/039-windows-fim-create-dashboard.png" width="860" alt="win-client inventory rows show file-added 554/5 and integrity-changed 550/7."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/039-windows-fim-create-dashboard.png)
 
 </details>
+**W2-043.** win-client dashboard includes file-deleted rule 553/7.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/043-windows-fim-delete-dashboard.png"><img src="evidence/screenshots/043-windows-fim-delete-dashboard.png" width="860" alt="win-client dashboard includes file-deleted rule 553/7."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/043-windows-fim-delete-dashboard.png)
+
 <details>
-<summary><strong>Windows file FIM · modification and deletion</strong></summary>
+<summary><strong>Supporting screenshots · Windows file FIM · modification and deletion</strong></summary>
 
 **W2-040.** Add-Content appends Modified LabShop Data to the monitored file.
 
-<img src="evidence/screenshots/040-windows-fim-modify-command.png" width="703" alt="Add-Content appends Modified LabShop Data to the monitored file.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/040-windows-fim-modify-command.png"><img src="evidence/screenshots/040-windows-fim-modify-command.png" width="703" alt="Add-Content appends Modified LabShop Data to the monitored file."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/040-windows-fim-modify-command.png)
 
 **W2-041.** win-client rows include integrity-changed rule 550/7. Raw diff details are not expanded in this crop.
 
-<img src="evidence/screenshots/041-windows-fim-modify-dashboard.png" width="1000" alt="win-client rows include integrity-changed rule 550/7. Raw diff details are not expanded in this crop.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/041-windows-fim-modify-dashboard.png"><img src="evidence/screenshots/041-windows-fim-modify-dashboard.png" width="860" alt="win-client rows include integrity-changed rule 550/7. Raw diff details are not expanded in this crop."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/041-windows-fim-modify-dashboard.png)
 
 **W2-042.** Remove-Item deletes C:\LabShopData\test.txt.
 
-<img src="evidence/screenshots/042-windows-fim-delete-command.png" width="480" alt="Remove-Item deletes C:\LabShopData\test.txt.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/042-windows-fim-delete-command.png"><img src="evidence/screenshots/042-windows-fim-delete-command.png" width="480" alt="Remove-Item deletes C:\LabShopData\test.txt."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/042-windows-fim-delete-command.png)
-
-**W2-043.** win-client dashboard includes file-deleted rule 553/7.
-
-<img src="evidence/screenshots/043-windows-fim-delete-dashboard.png" width="1000" alt="win-client dashboard includes file-deleted rule 553/7.">
-
-[Open original PNG](evidence/screenshots/043-windows-fim-delete-dashboard.png)
 
 </details>
 
@@ -830,20 +830,20 @@ Reads the existing Environment value, then sets Development. W2-044 captures the
 The handoff reports shortening the Windows scan interval, but supplies no exact value and W2-037 does not show it. W2-045 records registry-value **750/5** and registry-key **594/5** modification rows; do not assume the Linux 60-second test interval applies here.
 
 </details>
+**W2-045.** Expanded columns identify HKLM\SOFTWARE\LabShop with modified entries: registry-value rule 750/5 and registry-key rule 594/5.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/045-registry-modification-dashboard.png"><img src="evidence/screenshots/045-registry-modification-dashboard.png" width="860" alt="Expanded columns identify HKLM\SOFTWARE\LabShop with modified entries: registry-value rule 750/5 and registry-key rule 594/5."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/045-registry-modification-dashboard.png)
+
 <details>
-<summary><strong>Registry value change and dashboard classification</strong></summary>
+<summary><strong>Supporting screenshots · Registry value change and dashboard classification</strong></summary>
 
 **W2-044.** Set-ItemProperty changes the Environment value under HKLM:\SOFTWARE\LabShop to Development.
 
-<img src="evidence/screenshots/044-registry-modification-command.png" width="801" alt="Set-ItemProperty changes the Environment value under HKLM:\SOFTWARE\LabShop to Development.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/044-registry-modification-command.png"><img src="evidence/screenshots/044-registry-modification-command.png" width="801" alt="Set-ItemProperty changes the Environment value under HKLM:\SOFTWARE\LabShop to Development."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/044-registry-modification-command.png)
-
-**W2-045.** Expanded columns identify HKLM\SOFTWARE\LabShop with modified entries: registry-value rule 750/5 and registry-key rule 594/5.
-
-<img src="evidence/screenshots/045-registry-modification-dashboard.png" width="1000" alt="Expanded columns identify HKLM\SOFTWARE\LabShop with modified entries: registry-value rule 750/5 and registry-key rule 594/5.">
-
-[Open original PNG](evidence/screenshots/045-registry-modification-dashboard.png)
 
 </details>
 
@@ -910,13 +910,13 @@ Records command time (14:17:52 in W2-050). It does not by itself yield an alert-
 
 **W2-046.** The original syscheck block sets frequency 43200, scan_on_start=yes, scheduled system directories and realtime web-directory monitoring.
 
-<img src="evidence/screenshots/046-scheduled-fim-original-config.png" width="981" alt="The original syscheck block sets frequency 43200, scan_on_start=yes, scheduled system directories and realtime web-directory monitoring.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/046-scheduled-fim-original-config.png"><img src="evidence/screenshots/046-scheduled-fim-original-config.png" width="860" alt="The original syscheck block sets frequency 43200, scan_on_start=yes, scheduled system directories and realtime web-directory monitoring."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/046-scheduled-fim-original-config.png)
 
 **W2-047.** The agent log states File integrity monitoring scan frequency: 60 seconds. This supports a temporary test setting, not a restored 12-hour interval.
 
-<img src="evidence/screenshots/047-scheduled-fim-test-frequency.png" width="945" alt="The agent log states File integrity monitoring scan frequency: 60 seconds. This supports a temporary test setting, not a restored 12-hour interval.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/047-scheduled-fim-test-frequency.png"><img src="evidence/screenshots/047-scheduled-fim-test-frequency.png" width="860" alt="The agent log states File integrity monitoring scan frequency: 60 seconds. This supports a temporary test setting, not a restored 12-hour interval."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/047-scheduled-fim-test-frequency.png)
 
@@ -926,25 +926,25 @@ Records command time (14:17:52 in W2-050). It does not by itself yield an alert-
 
 **W2-048.** tee creates /etc/labshop-fim-test.txt with Original FIM Content.
 
-<img src="evidence/screenshots/048-scheduled-fim-create-command.png" width="960" alt="tee creates /etc/labshop-fim-test.txt with Original FIM Content.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/048-scheduled-fim-create-command.png"><img src="evidence/screenshots/048-scheduled-fim-create-command.png" width="860" alt="tee creates /etc/labshop-fim-test.txt with Original FIM Content."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/048-scheduled-fim-create-command.png)
 
 **W2-049.** The dashboard shows a file-added 554/5 row. The path/mode fields are not expanded here.
 
-<img src="evidence/screenshots/049-scheduled-fim-create-dashboard.png" width="1000" alt="The dashboard shows a file-added 554/5 row. The path/mode fields are not expanded here.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/049-scheduled-fim-create-dashboard.png"><img src="evidence/screenshots/049-scheduled-fim-create-dashboard.png" width="860" alt="The dashboard shows a file-added 554/5 row. The path/mode fields are not expanded here."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/049-scheduled-fim-create-dashboard.png)
 
 **W2-050.** date displays 2026-10-30 14:17:52 before the test file is modified. This is the command timestamp, not an end-to-end latency measurement.
 
-<img src="evidence/screenshots/050-scheduled-fim-modify-command.png" width="723" alt="date displays 2026-10-30 14:17:52 before the test file is modified. This is the command timestamp, not an end-to-end latency measurement.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/050-scheduled-fim-modify-command.png"><img src="evidence/screenshots/050-scheduled-fim-modify-command.png" width="723" alt="date displays 2026-10-30 14:17:52 before the test file is modified. This is the command timestamp, not an end-to-end latency measurement."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/050-scheduled-fim-modify-command.png)
 
 **W2-051.** Integrity-changed rule 550/7 appears alongside a session event. The crop alone is insufficient for precise realtime-versus-scheduled timing.
 
-<img src="evidence/screenshots/051-scheduled-fim-modify-dashboard.png" width="1000" alt="Integrity-changed rule 550/7 appears alongside a session event. The crop alone is insufficient for precise realtime-versus-scheduled timing.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/051-scheduled-fim-modify-dashboard.png"><img src="evidence/screenshots/051-scheduled-fim-modify-dashboard.png" width="860" alt="Integrity-changed rule 550/7 appears alongside a session event. The crop alone is insufficient for precise realtime-versus-scheduled timing."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/051-scheduled-fim-modify-dashboard.png)
 
@@ -983,13 +983,13 @@ Open the relevant agent/policy rather than mixing the two hosts' totals. The fol
 
 **W2-052.** Ubuntu CIS 22.04 v2.0.0 baseline: 92 passed, 104 failed, 11 not applicable; score 46%.
 
-<img src="evidence/screenshots/052-ubuntu-sca-baseline.png" width="1000" alt="Ubuntu CIS 22.04 v2.0.0 baseline: 92 passed, 104 failed, 11 not applicable; score 46%.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/052-ubuntu-sca-baseline.png"><img src="evidence/screenshots/052-ubuntu-sca-baseline.png" width="860" alt="Ubuntu CIS 22.04 v2.0.0 baseline: 92 passed, 104 failed, 11 not applicable; score 46%."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/052-ubuntu-sca-baseline.png)
 
 **W2-053.** Windows 10 Enterprise CIS v4.0.0 baseline: 117 passed, 302 failed, 5 not applicable; score 27%.
 
-<img src="evidence/screenshots/053-windows-sca-baseline.png" width="1000" alt="Windows 10 Enterprise CIS v4.0.0 baseline: 117 passed, 302 failed, 5 not applicable; score 27%.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/053-windows-sca-baseline.png"><img src="evidence/screenshots/053-windows-sca-baseline.png" width="860" alt="Windows 10 Enterprise CIS v4.0.0 baseline: 117 passed, 302 failed, 5 not applicable; score 27%."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/053-windows-sca-baseline.png)
 
@@ -1087,32 +1087,32 @@ Sets the ownership and restricts the crontab file / hourly directory according t
 W2-056 shows both checks passed; W2-057 changes the selected Ubuntu policy to **94 passed / 102 failed / 11 N/A**, score **47%**. A script completion message alone would not establish the SCA result.
 
 </details>
+**W2-057.** Ubuntu SCA summary changes to 94 passed, 102 failed, 11 not applicable; score 47%.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/057-ubuntu-sca-after-remediation.png"><img src="evidence/screenshots/057-ubuntu-sca-after-remediation.png" width="860" alt="Ubuntu SCA summary changes to 94 passed, 102 failed, 11 not applicable; score 47%."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/057-ubuntu-sca-after-remediation.png)
+
 <details>
-<summary><strong>Ubuntu SCA · check definitions, actual script and passing results</strong></summary>
+<summary><strong>Supporting screenshots · Ubuntu SCA · check definitions, actual script and passing results</strong></summary>
 
 **W2-054.** The policy excerpt identifies checks 28626 (/etc/crontab) and 28627 (/etc/cron.hourly), with neighboring checks.
 
-<img src="evidence/screenshots/054-ubuntu-sca-check-definitions.png" width="1000" alt="The policy excerpt identifies checks 28626 (/etc/crontab) and 28627 (/etc/cron.hourly), with neighboring checks.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/054-ubuntu-sca-check-definitions.png"><img src="evidence/screenshots/054-ubuntu-sca-check-definitions.png" width="860" alt="The policy excerpt identifies checks 28626 (/etc/crontab) and 28627 (/etc/cron.hourly), with neighboring checks."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/054-ubuntu-sca-check-definitions.png)
 
 **W2-055.** The captured script saves permission modes, changes root ownership and sets crontab 600 / cron.hourly 700. Before/after output is present.
 
-<img src="evidence/screenshots/055-ubuntu-sca-remediation-script.png" width="672" alt="The captured script saves permission modes, changes root ownership and sets crontab 600 / cron.hourly 700. Before/after output is present.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/055-ubuntu-sca-remediation-script.png"><img src="evidence/screenshots/055-ubuntu-sca-remediation-script.png" width="672" alt="The captured script saves permission modes, changes root ownership and sets crontab 600 / cron.hourly 700. Before/after output is present."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/055-ubuntu-sca-remediation-script.png)
 
 **W2-056.** SCA event rows report the two permission checks as passed.
 
-<img src="evidence/screenshots/056-ubuntu-sca-passed-events.png" width="1000" alt="SCA event rows report the two permission checks as passed.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/056-ubuntu-sca-passed-events.png"><img src="evidence/screenshots/056-ubuntu-sca-passed-events.png" width="860" alt="SCA event rows report the two permission checks as passed."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/056-ubuntu-sca-passed-events.png)
-
-**W2-057.** Ubuntu SCA summary changes to 94 passed, 102 failed, 11 not applicable; score 47%.
-
-<img src="evidence/screenshots/057-ubuntu-sca-after-remediation.png" width="1000" alt="Ubuntu SCA summary changes to 94 passed, 102 failed, 11 not applicable; score 47%.">
-
-[Open original PNG](evidence/screenshots/057-ubuntu-sca-after-remediation.png)
 
 </details>
 
@@ -1197,35 +1197,35 @@ Both exports show **24**. W2-060 reports check **15500** passed; W2-061 shows **
 
 **W2-058.** secedit exports the initial local policy; PasswordHistorySize is 0.
 
-<img src="evidence/screenshots/058-windows-sca-before-policy.png" width="693" alt="secedit exports the initial local policy; PasswordHistorySize is 0.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/058-windows-sca-before-policy.png"><img src="evidence/screenshots/058-windows-sca-before-policy.png" width="693" alt="secedit exports the initial local policy; PasswordHistorySize is 0."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/058-windows-sca-before-policy.png)
 
 **W2-059.** An INF template sets PasswordHistorySize=24; secedit configures/exports it, and after.inf reports 24. Successful commands are visible.
 
-<img src="evidence/screenshots/059-windows-sca-remediation-script.png" width="956" alt="An INF template sets PasswordHistorySize=24; secedit configures/exports it, and after.inf reports 24. Successful commands are visible.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/059-windows-sca-remediation-script.png"><img src="evidence/screenshots/059-windows-sca-remediation-script.png" width="860" alt="An INF template sets PasswordHistorySize=24; secedit configures/exports it, and after.inf reports 24. Successful commands are visible."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/059-windows-sca-remediation-script.png)
 
 </details>
-<details>
-<summary><strong>Windows SCA · passing check, policy summary and independent export</strong></summary>
-
-**W2-060.** SCA event row reports check 15500, Ensure Enforce password history is set to 24 or more passwords, as passed.
-
-<img src="evidence/screenshots/060-windows-sca-passed-event.png" width="1000" alt="SCA event row reports check 15500, Ensure Enforce password history is set to 24 or more passwords, as passed.">
-
-[Open original PNG](evidence/screenshots/060-windows-sca-passed-event.png)
-
 **W2-061.** Windows SCA summary changes to 118 passed, 301 failed, 5 not applicable; score 28%.
 
-<img src="evidence/screenshots/061-windows-sca-after-remediation.png" width="1000" alt="Windows SCA summary changes to 118 passed, 301 failed, 5 not applicable; score 28%.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/061-windows-sca-after-remediation.png"><img src="evidence/screenshots/061-windows-sca-after-remediation.png" width="860" alt="Windows SCA summary changes to 118 passed, 301 failed, 5 not applicable; score 28%."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/061-windows-sca-after-remediation.png)
 
+<details>
+<summary><strong>Supporting screenshots · Windows SCA · passing check, policy summary and independent export</strong></summary>
+
+**W2-060.** SCA event row reports check 15500, Ensure Enforce password history is set to 24 or more passwords, as passed.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/060-windows-sca-passed-event.png"><img src="evidence/screenshots/060-windows-sca-passed-event.png" width="860" alt="SCA event row reports check 15500, Ensure Enforce password history is set to 24 or more passwords, as passed."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/060-windows-sca-passed-event.png)
+
 **W2-062.** A separate verification export shows PasswordHistorySize=24 in verify.inf.
 
-<img src="evidence/screenshots/062-windows-sca-effective-policy.png" width="686" alt="A separate verification export shows PasswordHistorySize=24 in verify.inf.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/062-windows-sca-effective-policy.png"><img src="evidence/screenshots/062-windows-sca-effective-policy.png" width="686" alt="A separate verification export shows PasswordHistorySize=24 in verify.inf."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/062-windows-sca-effective-policy.png)
 
@@ -1285,29 +1285,29 @@ No kernel/Windows patch installation, reboot or post-remediation inventory clear
 
 **W2-063.** The filtered Windows dashboard displays 71 Critical findings. Other severity counts in this filtered view are not a whole-host vulnerability assessment.
 
-<img src="evidence/screenshots/063-windows-vulnerability-dashboard.png" width="1000" alt="The filtered Windows dashboard displays 71 Critical findings. Other severity counts in this filtered view are not a whole-host vulnerability assessment.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/063-windows-vulnerability-dashboard.png"><img src="evidence/screenshots/063-windows-vulnerability-dashboard.png" width="860" alt="The filtered Windows dashboard displays 71 Critical findings. Other severity counts in this filtered view are not a whole-host vulnerability assessment."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/063-windows-vulnerability-dashboard.png)
 
 **W2-064.** The filtered Ubuntu dashboard displays 103 Critical findings.
 
-<img src="evidence/screenshots/064-ubuntu-vulnerability-dashboard.png" width="1000" alt="The filtered Ubuntu dashboard displays 103 Critical findings.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/064-ubuntu-vulnerability-dashboard.png"><img src="evidence/screenshots/064-ubuntu-vulnerability-dashboard.png" width="860" alt="The filtered Ubuntu dashboard displays 103 Critical findings."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/064-ubuntu-vulnerability-dashboard.png)
 
 </details>
-<details>
-<summary><strong>Package/CVE inventory and exact versions</strong></summary>
-
 **W2-065.** Ubuntu critical inventory rows identify linux-image-6.8.0-138-generic and associated CVE entries. No patch/reboot/re-scan is shown.
 
-<img src="evidence/screenshots/065-ubuntu-vulnerability-inventory.png" width="1000" alt="Ubuntu critical inventory rows identify linux-image-6.8.0-138-generic and associated CVE entries. No patch/reboot/re-scan is shown.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/065-ubuntu-vulnerability-inventory.png"><img src="evidence/screenshots/065-ubuntu-vulnerability-inventory.png" width="860" alt="Ubuntu critical inventory rows identify linux-image-6.8.0-138-generic and associated CVE entries. No patch/reboot/re-scan is shown."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/065-ubuntu-vulnerability-inventory.png)
 
+<details>
+<summary><strong>Supporting screenshots · Package/CVE inventory and exact versions</strong></summary>
+
 **W2-066.** Windows critical inventory lists Windows 10 Enterprise 10.0.19045.6456 and CVE entries; successful remediation is not established.
 
-<img src="evidence/screenshots/066-windows-vulnerability-inventory.png" width="1000" alt="Windows critical inventory lists Windows 10 Enterprise 10.0.19045.6456 and CVE entries; successful remediation is not established.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/066-windows-vulnerability-inventory.png"><img src="evidence/screenshots/066-windows-vulnerability-inventory.png" width="860" alt="Windows critical inventory lists Windows 10 Enterprise 10.0.19045.6456 and CVE entries; successful remediation is not established."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/066-windows-vulnerability-inventory.png)
 
@@ -1386,13 +1386,13 @@ A nonexistent capture NIC prevents capture even when packages are installed. Res
 
 **W2-067.** APT installs Suricata and dependencies. PPA execution or a latest-release installation is not proved by this capture.
 
-<img src="evidence/screenshots/067-suricata-package-install.png" width="631" alt="APT installs Suricata and dependencies. PPA execution or a latest-release installation is not proved by this capture.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/067-suricata-package-install.png"><img src="evidence/screenshots/067-suricata-package-install.png" width="631" alt="APT installs Suricata and dependencies. PPA execution or a latest-release installation is not proved by this capture."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/067-suricata-package-install.png)
 
 **W2-068.** systemctl shows Suricata active (running) and enabled, with the AF_PACKET launch command. An earlier eth0 failure is not displayed here.
 
-<img src="evidence/screenshots/068-suricata-active-service.png" width="900" alt="systemctl shows Suricata active (running) and enabled, with the AF_PACKET launch command. An earlier eth0 failure is not displayed here.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/068-suricata-active-service.png"><img src="evidence/screenshots/068-suricata-active-service.png" width="860" alt="systemctl shows Suricata active (running) and enabled, with the AF_PACKET launch command. An earlier eth0 failure is not displayed here."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/068-suricata-active-service.png)
 
@@ -1464,30 +1464,30 @@ Defines protected addresses for signatures that reference that variable. It does
 Reads the Suricata version/config and manages rules. A tool-start screenshot is not proof that all external rules downloaded successfully.
 
 </details>
-<details>
-<summary><strong>Interfaces, AF_PACKET, HOME_NET and detected version</strong></summary>
-
-**W2-069.** ubuntu-web has ens33 192.168.38.131/24 and a dynamic NAT-side ens36 address 192.168.121.157/24. Final endpoint isolation is not yet shown.
-
-<img src="evidence/screenshots/069-suricata-interface-addresses.png" width="938" alt="ubuntu-web has ens33 192.168.38.131/24 and a dynamic NAT-side ens36 address 192.168.121.157/24. Final endpoint isolation is not yet shown.">
-
-[Open original PNG](evidence/screenshots/069-suricata-interface-addresses.png)
-
 **W2-070.** The AF_PACKET block selects ens33, cluster-id 99 and cluster-type cluster_flow.
 
-<img src="evidence/screenshots/070-suricata-af-packet-config.png" width="788" alt="The AF_PACKET block selects ens33, cluster-id 99 and cluster-type cluster_flow.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/070-suricata-af-packet-config.png"><img src="evidence/screenshots/070-suricata-af-packet-config.png" width="788" alt="The AF_PACKET block selects ens33, cluster-id 99 and cluster-type cluster_flow."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/070-suricata-af-packet-config.png)
 
 **W2-071.** HOME_NET is [192.168.38.0/24]. This controls rule variables, not NIC selection.
 
-<img src="evidence/screenshots/071-suricata-home-net-config.png" width="579" alt="HOME_NET is [192.168.38.0/24]. This controls rule variables, not NIC selection.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/071-suricata-home-net-config.png"><img src="evidence/screenshots/071-suricata-home-net-config.png" width="579" alt="HOME_NET is [192.168.38.0/24]. This controls rule variables, not NIC selection."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/071-suricata-home-net-config.png)
 
+<details>
+<summary><strong>Supporting screenshots · Interfaces, AF_PACKET, HOME_NET and detected version</strong></summary>
+
+**W2-069.** ubuntu-web has ens33 192.168.38.131/24 and a dynamic NAT-side ens36 address 192.168.121.157/24. Final endpoint isolation is not yet shown.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/069-suricata-interface-addresses.png"><img src="evidence/screenshots/069-suricata-interface-addresses.png" width="860" alt="ubuntu-web has ens33 192.168.38.131/24 and a dynamic NAT-side ens36 address 192.168.121.157/24. Final endpoint isolation is not yet shown."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/069-suricata-interface-addresses.png)
+
 **W2-072.** suricata-update detects version 6.0.4 and reads the configuration. Completion of the ET Open fetch is outside this crop.
 
-<img src="evidence/screenshots/072-suricata-update-version.png" width="824" alt="suricata-update detects version 6.0.4 and reads the configuration. Completion of the ET Open fetch is outside this crop.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/072-suricata-update-version.png"><img src="evidence/screenshots/072-suricata-update-version.png" width="824" alt="suricata-update detects version 6.0.4 and reads the configuration. Completion of the ET Open fetch is outside this crop."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/072-suricata-update-version.png)
 
@@ -1590,18 +1590,18 @@ Clears the prior failed service state, starts the corrected setup and reads its 
 Looks at recent rule/error lines. Interpret timestamps so an old startup error is not presented as the current result.
 
 </details>
-<details>
-<summary><strong>Signature body and successful configuration test</strong></summary>
-
 **W2-073.** The custom HTTP rule targets 192.168.38.131, uses http.uri content /admin, and SID 1000001 rev 1.
 
-<img src="evidence/screenshots/073-suricata-admin-signature.png" width="1000" alt="The custom HTTP rule targets 192.168.38.131, uses http.uri content /admin, and SID 1000001 rev 1.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/073-suricata-admin-signature.png"><img src="evidence/screenshots/073-suricata-admin-signature.png" width="860" alt="The custom HTTP rule targets 192.168.38.131, uses http.uri content /admin, and SID 1000001 rev 1."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/073-suricata-admin-signature.png)
 
+<details>
+<summary><strong>Supporting screenshots · Signature body and successful configuration test</strong></summary>
+
 **W2-074.** Suricata 6.0.4 reports configuration successfully loaded in -T test mode. Runtime delivery is checked separately.
 
-<img src="evidence/screenshots/074-suricata-config-test.png" width="878" alt="Suricata 6.0.4 reports configuration successfully loaded in -T test mode. Runtime delivery is checked separately.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/074-suricata-config-test.png"><img src="evidence/screenshots/074-suricata-config-test.png" width="860" alt="Suricata 6.0.4 reports configuration successfully loaded in -T test mode. Runtime delivery is checked separately."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/074-suricata-config-test.png)
 
@@ -1684,31 +1684,31 @@ Checks parser/detection activity. A counter alone does not prove a particular al
 
 **W2-075.** Windows curl.exe requests /admin on ubuntu-web and receives an Apache 404 response.
 
-<img src="evidence/screenshots/075-suricata-windows-http-request.png" width="529" alt="Windows curl.exe requests /admin on ubuntu-web and receives an Apache 404 response.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/075-suricata-windows-http-request.png"><img src="evidence/screenshots/075-suricata-windows-http-request.png" width="529" alt="Windows curl.exe requests /admin on ubuntu-web and receives an Apache 404 response."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/075-suricata-windows-http-request.png)
 
 **W2-076.** tcpdump on ens33 observes Windows .133 to Ubuntu .131 TCP/80, GET /admin and the 404 response.
 
-<img src="evidence/screenshots/076-suricata-tcpdump-http-flow.png" width="1000" alt="tcpdump on ens33 observes Windows .133 to Ubuntu .131 TCP/80, GET /admin and the 404 response.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/076-suricata-tcpdump-http-flow.png"><img src="evidence/screenshots/076-suricata-tcpdump-http-flow.png" width="860" alt="tcpdump on ens33 observes Windows .133 to Ubuntu .131 TCP/80, GET /admin and the 404 response."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/076-suricata-tcpdump-http-flow.png)
 
 </details>
+**W2-078.** fast.log records [1:1000001:1] LabShop Admin Page Probe from .133 to .131:80.
+
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/078-suricata-fast-log-alert.png"><img src="evidence/screenshots/078-suricata-fast-log-alert.png" width="860" alt="fast.log records [1:1000001:1] LabShop Admin Page Probe from .133 to .131:80."></a></td></tr></table>
+
+[Open original PNG](evidence/screenshots/078-suricata-fast-log-alert.png)
+
 <details>
-<summary><strong>HTTP EVE metadata and the custom fast.log alert</strong></summary>
+<summary><strong>Supporting screenshots · HTTP EVE metadata and the custom fast.log alert</strong></summary>
 
 **W2-077.** The local EVE JSON query selects event_type=http, showing URL /admin and status 404. This is an HTTP record, not the alert-type proof.
 
-<img src="evidence/screenshots/077-suricata-eve-http-record.png" width="1000" alt="The local EVE JSON query selects event_type=http, showing URL /admin and status 404. This is an HTTP record, not the alert-type proof.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/077-suricata-eve-http-record.png"><img src="evidence/screenshots/077-suricata-eve-http-record.png" width="860" alt="The local EVE JSON query selects event_type=http, showing URL /admin and status 404. This is an HTTP record, not the alert-type proof."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/077-suricata-eve-http-record.png)
-
-**W2-078.** fast.log records [1:1000001:1] LabShop Admin Page Probe from .133 to .131:80.
-
-<img src="evidence/screenshots/078-suricata-fast-log-alert.png" width="1000" alt="fast.log records [1:1000001:1] LabShop Admin Page Probe from .133 to .131:80.">
-
-[Open original PNG](evidence/screenshots/078-suricata-fast-log-alert.png)
 
 </details>
 
@@ -1771,16 +1771,11 @@ Reloads collection and checks agent state. The later EVE-origin dashboard record
 Creates a fresh appended record after collection is active. Do not assume an earlier local log entry was retroactively read or use two different requests to invent a pipeline-latency figure.
 
 </details>
-<details>
-<summary><strong>EVE JSON collection configuration</strong></summary>
-
 **W2-079.** The Wazuh agent localfile fragment reads /var/log/suricata/eve.json as json.
 
-<img src="evidence/screenshots/079-suricata-agent-eve-localfile.png" width="579" alt="The Wazuh agent localfile fragment reads /var/log/suricata/eve.json as json.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/079-suricata-agent-eve-localfile.png"><img src="evidence/screenshots/079-suricata-agent-eve-localfile.png" width="579" alt="The Wazuh agent localfile fragment reads /var/log/suricata/eve.json as json."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/079-suricata-agent-eve-localfile.png)
-
-</details>
 
 
 <a id="step-16"></a>
@@ -1816,33 +1811,28 @@ Suricata's **1000001** is the custom network signature. Wazuh's **86601** is the
 
 **W2-080.** The expanded Wazuh source contains event_type=alert, signature_id=1000001, LabShop Admin Page Probe, action=allowed, ens33, source .133 and destination .131.
 
-<img src="evidence/screenshots/080-suricata-wazuh-eve-alert.png" width="1000" alt="The expanded Wazuh source contains event_type=alert, signature_id=1000001, LabShop Admin Page Probe, action=allowed, ens33, source .133 and destination .131.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/080-suricata-wazuh-eve-alert.png"><img src="evidence/screenshots/080-suricata-wazuh-eve-alert.png" width="860" alt="The expanded Wazuh source contains event_type=alert, signature_id=1000001, LabShop Admin Page Probe, action=allowed, ens33, source .133 and destination .131."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/080-suricata-wazuh-eve-alert.png)
 
 **W2-081.** Wazuh event detail identifies ubuntu-web, alert signature 1000001, app_proto=http and destination .131.
 
-<img src="evidence/screenshots/081-suricata-wazuh-signature-fields.png" width="618" alt="Wazuh event detail identifies ubuntu-web, alert signature 1000001, app_proto=http and destination .131.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/081-suricata-wazuh-signature-fields.png"><img src="evidence/screenshots/081-suricata-wazuh-signature-fields.png" width="618" alt="Wazuh event detail identifies ubuntu-web, alert signature 1000001, app_proto=http and destination .131."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/081-suricata-wazuh-signature-fields.png)
 
 </details>
-<details>
-<summary><strong>End-to-end EVE alert · HTTP context, eve.json location and Wazuh 86601/3</strong></summary>
-
 **W2-082.** The event detail retains event_type=alert, GET and HTTP URL /admin, with flow fields.
 
-<img src="evidence/screenshots/082-suricata-wazuh-http-fields.png" width="671" alt="The event detail retains event_type=alert, GET and HTTP URL /admin, with flow fields.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/082-suricata-wazuh-http-fields.png"><img src="evidence/screenshots/082-suricata-wazuh-http-fields.png" width="671" alt="The event detail retains event_type=alert, GET and HTTP URL /admin, with flow fields."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/082-suricata-wazuh-http-fields.png)
 
 **W2-083.** Wazuh detail shows decoder=json, location=/var/log/suricata/eve.json, groups ids/suricata, rule 86601 and level 3. This is the EVE-origin proof, not an Apache access-log alert.
 
-<img src="evidence/screenshots/083-suricata-wazuh-rule-86601.png" width="603" alt="Wazuh detail shows decoder=json, location=/var/log/suricata/eve.json, groups ids/suricata, rule 86601 and level 3. This is the EVE-origin proof, not an Apache access-log alert.">
+<table width="900"><tr><td width="900" align="center"><a href="evidence/screenshots/083-suricata-wazuh-rule-86601.png"><img src="evidence/screenshots/083-suricata-wazuh-rule-86601.png" width="603" alt="Wazuh detail shows decoder=json, location=/var/log/suricata/eve.json, groups ids/suricata, rule 86601 and level 3. This is the EVE-origin proof, not an Apache access-log alert."></a></td></tr></table>
 
 [Open original PNG](evidence/screenshots/083-suricata-wazuh-rule-86601.png)
-
-</details>
 
 The earlier local HTTP event is around 20:08, while this collected alert is around 20:17 after a new request. These are separate test requests, not a measured nine-minute delivery delay. The earlier 23-page source described in the handoff ended with an Apache alert; the supplied 25-page file contains the correct Suricata details above.
 

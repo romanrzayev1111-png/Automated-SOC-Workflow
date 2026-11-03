@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 
 from build_readmes import hero, scorecard, section_image
+from screenshot_layout import DAY2_PRIMARY, prioritize, frame_screenshots
 
 ROOT = Path(__file__).resolve().parents[1]
 DAY = ROOT / 'days/day-02'
@@ -77,7 +78,7 @@ def build():
 
 # Day 02 · Detection and endpoint monitoring
 
-This day adds application detections, file/Registry monitoring, SCA hardening and a Suricata HTTP rule to the existing deployment. Commands and configuration are shown inline. Expand an arrow for command notes or original screenshots.
+This day adds application detections, file/Registry monitoring, SCA hardening and a Suricata HTTP rule to the existing deployment. Commands and key results are shown inline. Expand an arrow for command notes or supporting screenshots; click an image to open its original resolution.
 
 ![Day 02 coverage](../../assets/day-02-metrics.svg)
 
@@ -138,7 +139,8 @@ For LabShop, custom manager rules use 100100/100101. For Suricata, custom networ
 
 Prepared by Roman Rzayev.
 '''
-    (DAY / 'README.md').write_text(intro + body + footer)
+    page = prioritize(intro + body + footer, DAY2_PRIMARY)
+    (DAY / 'README.md').write_text(frame_screenshots(page, DAY))
     architecture()
     print('Built Day 02: 16 stages, inline configuration and all 72 original captures.')
 
